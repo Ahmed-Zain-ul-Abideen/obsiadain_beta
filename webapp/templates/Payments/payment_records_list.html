@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load role_tags %}
+{% block content %}
+
+<div class="row">
+    <div class="col-12">
+        <!-- Header Card -->
+        <div class="card shadow mb-4">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <h3 class="m-0 text-center w-100 fw-bold">Payment Records List</h3>
+            </div>
+        </div>    
+        {% if messages %} 
+          {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %} 
+        {% endif %}
+        <div class="card">
+            <div class="card-header border-0 align-items-center d-flex pb-0">
+                <h4 class="card-title mb-0 flex-grow-1">Payments List</h4>
+
+                <!-- <form method="get" class="d-flex" style="gap: 8px;">
+                    <input 
+                        type="text" 
+                        name="q" 
+                        class="form-control form-control-sm" 
+                        placeholder="Search by Mill Name..." 
+                        value="{{ query|default:'' }}"
+                        style="width: 220px;"
+                    >
+                    <button type="submit" class="btn btn-sm btn-primary">Search</button>
+                    {% if query %}
+                        <a href="{% url 'payments_list' %}" class="btn btn-sm btn-secondary">Reset</a>
+                    {% endif %}
+                </form> -->
+            </div>
+
+            <div class="card-body pt-2">
+                <div class="table-responsive">
+                    {% if payments %}
+                        <table class="table table-bordered align-middle table-nowrap mb-0 text-center">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Sr. No.</th>
+                                    <th>Mill Name</th>
+                                    <th>Unit ID</th>
+                                    <th>Attachment Type</th>
+                                    <th>Preview</th>
+                                    <th>Download</th>
+                                    <th>Inspection</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for p in payments %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ p.mill.name }}</td>
+                                        <td>{{ p.unit.id }}</td>
+
+                                        <!-- Attachment Type -->
+                                        <td>
+                                            {% if p.attachment %}
+                                                {% with url=p.attachment.url|lower %}
+                                                    {% if url|slice:"-4:" == ".pdf" %}
+                                                        <span class="badge rounded badge-soft-danger font-size-12">PDF</span>
+                                                    {% elif url|slice:"-4:" == ".jpg" or url|slice:"-5:" == ".jpeg" or url|slice:"-4:" == ".png" %}
+                                                        <span class="badge rounded badge-soft-success font-size-12">Image</span>
+                                                    {% else %}
+                                                        <span class="badge rounded badge-soft-secondary font-size-12">File</span>
+                                                    {% endif %}
+                                                {% endwith %}
+                                            {% else %}
+                                                <span class="text-muted">No Attachment</span>
+                                            {% endif %}
+                                        </td>
+
+                                        <!-- Preview -->
+                                        <td>
+                                            {% if p.attachment %}
+                                                {% with url=p.attachment.url|lower %}
+                                                    {% if url|slice:"-4:" == ".pdf" %}
+                                                        <a href="{{ p.attachment.url }}" target="_blank" class="btn btn-sm btn-primary">
+                                                            View PDF
+                                                        </a>
+                                                    {% elif url|slice:"-4:" == ".jpg" or url|slice:"-5:" == ".jpeg" or url|slice:"-4:" == ".png" %}
+                                                        <img src="{{ p.attachment.url }}" 
+                                                            class="img-fluid rounded border" 
+                                                            style="max-height: 80px; width: auto;" 
+                                                            alt="Attachment Preview">
+                                                    {% else %}
+                                                        <a href="{{ p.attachment.url }}" target="_blank" class="btn btn-sm btn-primary">
+                                                            View File
+                                                        </a>
+                                                    {% endif %}
+                                                {% endwith %}
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </td>
+
+                                        <!-- Download -->
+                                        <td>
+                                            {% if p.attachment %}
+                                                {% with url=p.attachment.url|lower %}
+                                                    {% if url|slice:"-4:" == ".pdf" %}
+                                                        <a href="{{ p.attachment.url }}" download class="btn btn-sm btn-outline-secondary w-100">
+                                                            Download PDF
+                                                        </a>
+                                                    {% elif url|slice:"-4:" == ".jpg" or url|slice:"-5:" == ".jpeg" or url|slice:"-4:" == ".png" %}
+                                                        <a href="{{ p.attachment.url }}" download class="btn btn-sm btn-outline-secondary w-100">
+                                                            Download Image
+                                                        </a>
+                                                    {% else %}
+                                                        <a href="{{ p.attachment.url }}" download class="btn btn-sm btn-outline-secondary w-100">
+                                                            Download File
+                                                        </a>
+                                                    {% endif %}
+                                                {% endwith %}
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </td>
+
+                                        <!-- Inspection -->
+                                        <td>
+                                            {% if p.is_approved %}
+                                                <a href="{% url 'view_inspection_of_payment' p.id %}" 
+                                                class="btn btn-warning btn-sm w-100">
+                                                    View Analyzed Payment
+                                                </a>
+                                            {% else %}
+                                                {% if request.user.is_superuser %}
+                                                    <a href="{% url 'inspect_payment' p.id %}" 
+                                                    class="btn btn-success btn-sm w-100">
+                                                        Analyze Payment
+                                                    </a>
+                                                {% else %}
+                                                    <a href="{% url 'view_inspection_of_payment' p.id %}" 
+                                                    class="btn btn-success btn-sm w-100">
+                                                        View Analyzed Payment
+                                                    </a>
+                                                {% endif %}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="alert alert-info text-center mt-3">
+                            No Payment Records Found.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

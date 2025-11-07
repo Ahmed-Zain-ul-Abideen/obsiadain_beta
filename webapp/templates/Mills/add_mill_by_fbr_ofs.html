@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <h3 class="mb-4 text-center fw-bold">Add Mill</h3>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="POST" action="{% url 'add_mill_by_fbr_official' %}">
+    {% csrf_token %}
+    
+    <input type="hidden" id="lat" name="lat">
+    <input type="hidden" id="lon" name="lon">
+
+    <!-- User Account Information -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header bg-primary text-white fw-semibold">
+        User Login Information
+      </div>
+      <div class="card-body">
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Username</label>
+            <input type="text" name="username" class="form-control" placeholder="Enter Username" required>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" placeholder="Enter Email Address" required>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Mill Information -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header bg-dark text-white fw-semibold">Mill Information</div>
+      <div class="card-body">
+
+        <div class="mb-3">
+          <label class="form-label">Mill Name</label>
+          <input type="text" name="name" class="form-control" placeholder="Enter Mill Name" required>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Unit Details -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header bg-info text-dark fw-semibold">Mill Unit Information</div>
+      <div class="card-body">
+
+        <div class="mb-3 position-relative">
+          <label class="form-label">Unit Address</label>
+          <input type="text" id="unit_address" name="address" class="form-control"
+           placeholder="Start typing address..."
+           autocomplete="off" required>
+          <div id="addressSuggestions"
+           class="list-group position-absolute w-100"
+           style="z-index:1000;"></div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">NTN</label>
+            <input type="number" name="ntn" class="form-control" placeholder="Enter NTN">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">GST</label>
+            <input type="number" name="gst" class="form-control" placeholder="Enter GST">
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label class="form-label">Spindles Installed</label>
+            <input type="number" name="spindles_installed" class="form-control" placeholder="Spindles Count">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Rotors Installed</label>
+            <input type="number" name="rotors_installed" class="form-control" placeholder="Rotors Count">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Doubling Machines Installed</label>
+            <input type="number" name="doubling_machines_installed" class="form-control" placeholder="Doubling Machines Count">
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <button class="btn btn-success w-100 py-2 fw-bold">Submit Mill</button>
+
+  </form>
+</div>
+
+
+<script>
+const input = document.getElementById("unit_address");
+const suggestionsBox = document.getElementById("addressSuggestions");
+
+input.addEventListener("input", function() {
+  let query = this.value;
+
+  if (query.length < 3) {
+    suggestionsBox.innerHTML = "";
+    return;
+  }
+
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=pk&q=${query}`)
+    .then(response => response.json())
+    .then(data => {
+      suggestionsBox.innerHTML = "";
+      data.forEach(place => {
+        suggestionsBox.innerHTML += `
+          <button type="button" class="list-group-item list-group-item-action" 
+            onclick="selectAddress('${place.display_name.replace(/'/g, "\\'")}', '${place.lat}', '${place.lon}')">
+            ${place.display_name}
+          </button>
+        `;
+      });
+    });
+});
+
+function selectAddress(address, lat, lon) {
+  input.value = address;
+  document.getElementById("lat").value = lat;
+  document.getElementById("lon").value = lon;
+  suggestionsBox.innerHTML = "";
+}
+</script>
+
+{% endblock %}

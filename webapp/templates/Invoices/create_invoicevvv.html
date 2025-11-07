@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Create Invoice{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-gradient text-white text-center" style="background: linear-gradient(90deg, #007bff, #6610f2);">
+            <h3 class="mb-0">🧾 Create New Invoice</h3>
+        </div>
+
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %} 
+
+                <!-- Invoice Details Section -->
+                <fieldset class="border rounded p-3 mb-4">
+                    <legend class="float-none w-auto px-3 fw-bold text-primary">Invoice Details</legend>
+                    <div class="row g-3">
+                        <div class="col-md-6">{{ form.invoice_no.label_tag }} {{ form.invoice_no }}</div>
+                        <div class="col-md-6">{{ form.date.label_tag }} {{ form.date }}</div>
+                        <div class="col-md-6">{{ form.customer_name.label_tag }} {{ form.customer_name }}</div>
+                        <div class="col-md-6">{{ form.customer_id.label_tag }} {{ form.customer_id }}</div>
+                        <div class="col-md-6">{{ form.bill_to.label_tag }} {{ form.bill_to }}</div>
+                        <div class="col-md-6">{{ form.site_location.label_tag }} {{ form.site_location }}</div>
+                        <div class="col-md-6">{{ form.remittance_amount.label_tag }} {{ form.remittance_amount }}</div>
+                    </div>
+                </fieldset>
+
+                <!-- Invoice Items Section -->
+                <fieldset class="border rounded p-3 mb-4">
+                    <legend class="float-none w-auto px-3 fw-bold text-primary">Invoice Items</legend> 
+
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover align-middle text-center" id="invoice-items-table">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>Sr#</th>
+                                    <th>Item Name</th>
+                                    <th>PCS</th>
+                                    <th>Description</th>
+                                    <th>Amount (PKR)</th>
+                                    <th>Payment</th>
+                                    <th>Balance</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{ formset.management_form }}
+                                {% for form in formset %}
+                                <tr class="item-row">
+                                    <td class="serial-number fw-bold text-secondary">{{ forloop.counter }}</td>
+                                    <td>{{ form.item_name }}</td>
+                                    <td>{{ form.pcs }}</td>
+                                    <td>{{ form.description }}</td>
+                                    <td>{{ form.amount }}</td>
+                                    <td>{{ form.payment }}</td>
+                                    <td>{{ form.balance }}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-outline-danger remove-row w-100">
+                                            <i class="bi bi-trash"></i> Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-3">
+                        <button type="button" class="btn btn-outline-primary" id="add-row">
+                            <i class="bi bi-plus-circle"></i> Add Item
+                        </button>
+                        <button type="submit" class="btn btn-success px-4">
+                            <i class="bi bi-file-earmark-pdf"></i> Save & Generate Invoice
+                        </button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Styling -->
+<style>
+    legend {
+        font-size: 1.1rem;
+    }
+    input, select, textarea {
+        width: 100%;
+        padding: 6px 8px;
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+    }
+    .table th, .table td {
+        vertical-align: middle !important;
+    }
+    .btn-outline-primary:hover {
+        background-color: #007bff;
+        color: white;
+    }
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+</style>
+
+<!-- Script -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const addRowBtn = document.getElementById("add-row");
+    const tableBody = document.querySelector("#invoice-items-table tbody");
+    const totalForms = document.querySelector("#id_invoice_items-TOTAL_FORMS");
+
+    function updateSerialNumbers() {
+        document.querySelectorAll(".serial-number").forEach((td, index) => {
+            td.textContent = index + 1;
+        });
+    }
+
+    // ✅ Add new item row
+    addRowBtn.addEventListener("click", function() {
+        const currentFormCount = parseInt(totalForms.value);
+        const firstRow = tableBody.querySelector("tr");
+        const newRow = firstRow.cloneNode(true);
+
+        newRow.querySelectorAll("input, textarea").forEach(input => {
+            if (input.name.includes("-DELETE")) {
+                input.checked = false;
+                return;
+            }
+            input.name = input.name.replace(/-(\d+)-/, `-${currentFormCount}-`);
+            input.id = input.id.replace(/-(\d+)-/, `-${currentFormCount}-`);
+            input.value = "";
+        });
+
+        tableBody.appendChild(newRow);
+        totalForms.value = currentFormCount + 1;
+        updateSerialNumbers();
+    });
+
+    // ✅ Remove item row (but keep at least one)
+    tableBody.addEventListener("click", function(e) {
+        if (e.target.classList.contains("remove-row") || e.target.closest(".remove-row")) {
+            const rows = tableBody.querySelectorAll(".item-row");
+            if (rows.length > 1) {
+                e.target.closest("tr").remove();
+                updateSerialNumbers();
+            } else {
+                alert("At least one invoice item must be present!");
+            }
+        }
+    });
+
+    updateSerialNumbers();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h3 class="mb-4">Master Settings</h3>
+
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+
+    <div class="card shadow-sm">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="mb-0 text-muted">Contact Number</h5>
+                <h4>{{ settings.contact|default:"Not Set" }}</h4>
+            </div>
+
+            <!-- Edit Button -->
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal">
+                Edit
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="editModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form method="post" class="modal-content">
+      {% csrf_token %}
+
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Contact Number</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+
+        <label class="form-label">Contact Number (Pakistani Format)</label>
+        <input type="text" name="contact" id="contactInput"
+               value="{{ settings.contact }}"
+               class="form-control" placeholder="e.g. 03001234567 or 04212345678" required>
+
+        <small class="text-muted">
+            Valid formats: 03001234567, 03231234567, 04212345678 (PTCL)
+        </small>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-success">Save</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+
+<!-- Frontend Validation -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById("contactInput");
+    const pattern = /^(03[0-9]{9}|0[0-9]{10})$/;
+
+    input.addEventListener("input", function () {
+        if (!pattern.test(this.value)) {
+            this.classList.add("is-invalid");
+        } else {
+            this.classList.remove("is-invalid");
+        }
+    });
+});
+</script>
+
+{% endblock %}

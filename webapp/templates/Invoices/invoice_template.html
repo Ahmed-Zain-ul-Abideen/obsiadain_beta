@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            margin: 20px;
+            color: #000;
+        }
+        .invoice-box {
+            width: 100%;
+            border: 1px solid #ddd;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .header-left h2 {
+            margin: 0;
+        }
+        .header-right {
+            text-align: right;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table th, table td {
+            border: 1px solid #888;
+            padding: 6px;
+            text-align: center;
+        }
+        table th {
+            background-color: #f2f2f2;
+        }
+        .summary {
+            margin-top: 15px;
+            text-align: right;
+        }
+        .remittance {
+            margin-top: 25px;
+            border: 1px solid #aaa;
+            padding: 15px;
+        }
+        .remittance h4 {
+            background-color: #f2f2f2;
+            margin: -15px -15px 10px -15px;
+            padding: 8px;
+        }
+        .remittance table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .remittance th, .remittance td {
+            border: none;
+            text-align: left;
+            padding: 4px 0;
+        }
+        .text-bold {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="invoice-box">
+    <div class="header">
+        <div class="header-left">
+            <h2>Invoice</h2>
+            <p><b>Invoice #:</b> {{ invoice.invoice_no }}</p>
+            <p><b>Date:</b> {{ invoice.date }}</p>
+            <p><b>Customer ID:</b> {{ invoice.customer_id }}</p>
+        </div>
+        <div class="header-right">
+            <p><b>Bill To:</b> {{ invoice.customer_name }}</p>
+            <p>{{ invoice.customer_name }}</p>
+            <p>{{ invoice.site_location }}</p>
+        </div>
+    </div>
+
+    <h4 style="background-color: #f2f2f2; padding: 6px;">Remittance Amount PKR: {{ invoice.remittance_amount }}</h4>
+
+    <table>
+        <thead>
+            <tr>
+                <th>S.No</th>
+                <th>Item</th>
+                <th>Pc's</th>
+                <th>Description</th>
+                <th>Amount PKR</th>
+                <th>Payment</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in  invoice.invoice_items.all %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ item.item_name }}</td>
+                <td>{{ item.pcs }}</td>
+                <td>{{ item.description|default:"-" }}</td>
+                <td>{{ item.amount }}</td>
+                <td>{{ item.payment }}</td>
+                <td>{{ item.balance }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="6" class="text-bold">Total</td>
+                <td class="text-bold">{{ invoice.remittance_amount }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="remittance">
+        <h4>REMITTANCE</h4>
+        <table>
+            <tr><th>Customer Name:</th><td>{{ invoice.customer_name }}</td></tr>
+            <tr><th>Customer ID:</th><td>{{ invoice.customer_id }}</td></tr>
+            <tr><th>Statement #:</th><td>{{ invoice.invoice_no }}</td></tr>
+            <tr><th>Date:</th><td>{{ invoice.date }}</td></tr>
+            <tr><th>Amount Due (PKR):</th><td>{{ invoice.remittance_amount }}</td></tr>
+            <tr><th>Amount Enclosed:</th><td>{{ invoice.remittance_amount }}</td></tr>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
