@@ -1,4 +1,5 @@
 import tempfile
+from django.core.mail import EmailMessage
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.http import HttpResponse
@@ -106,6 +107,44 @@ def generate_invoice_pdf(request, invoice_id):
         tmp.write(pdf_buffer.getvalue())
         tmp.seek(0)
         invoice.pdf_file.save(file_name, File(tmp), save=True)
+
+
+    # -------------------------------------------
+    # ✉️ Send PDF as Email Attachment
+    # -------------------------------------------
+    try:
+        email_to = invoice.mill_unit_invoices.mill.owner.email
+        unit_address = invoice.mill_unit_invoices.address
+
+        context = {
+            "invoice_no": invoice.invoice_no,
+            "remittance_amount": invoice.remittance_amount,
+            "site_location": invoice.site_location,
+            "status": "Generated Invoice",
+            "unit_address": unit_address,
+        }
+
+        # Render your email body HTML
+        html_email_body = render_to_string("Emails/Invoice_generated_email.html", context)
+
+        email_message = EmailMessage(
+            subject=f"Invoice {invoice.invoice_no} Generated",
+            body=html_email_body,
+            from_email=settings.EMAIL_HOST_USER,
+            to=[email_to],
+        )
+
+        email_message.content_subtype = "html"  # So it renders as HTML
+
+        # Attach PDF
+        email_message.attach(file_name, pdf_buffer.getvalue(), "application/pdf")
+
+        # Send the email
+        email_message.send(fail_silently=False)
+
+        print("Genrated  invoice  mail  sending  passed") 
+    except   Exception   as   e:
+        print("Genrated  invoice  mail  sending  failed")
 
     # Return inline PDF response
     response = HttpResponse(pdf_buffer.getvalue(), content_type='application/pdf')
