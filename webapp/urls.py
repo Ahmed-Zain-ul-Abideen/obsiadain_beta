@@ -10,7 +10,7 @@ from  webapp.Views.Others.others   import  *
 from  webapp.Views.Users_signup_nd_login.set_pass   import   set_password_view
 from   webapp.Chat.for_chats   import   *
 from   webapp.Views.Invoices.all_nvcs   import   *
-from  webapp.Views.Invoices.thr_xhtmpd   import  generate_invoice_pdf
+from  webapp.Views.Invoices.thr_xhtmpd   import  generate_invoice_pdf,generate_invoice_html
 
 urlpatterns = [
     # Landing Page
@@ -80,6 +80,7 @@ urlpatterns = [
     path('invoice/<int:invoice_id>/pdf/', generate_invoice_pdf, name='generate_invoice_pdf'),
     path("invoices-records/", Invoices_records_list, name="invoices_records"),
     path('analyze-invoice-payment/<int:invoice_id>/', analyze_invoice_payment, name='analyze_invoice_payment'),
+    path('invoice/<int:invoice_id>/html/', generate_invoice_html, name='generate_invoice_html'),
 
 
     #Chats

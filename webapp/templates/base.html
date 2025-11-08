@@ -36,10 +36,10 @@
                         <div class="navbar-brand-box">
                             <a href="{% url 'view_mills'  %}" class="logo logo-light">
                                 <span class="logo-sm">
-                                    <img src="{% static 'assets/images/logo-light.png' %}" alt="logo-sm-light" height="24">
+                                    <img src="{% static 'assets/images/FBR_Pakistan_logo.png' %}" alt="logo-sm-light" height="50">
                                 </span>
                                 <span class="logo-lg">
-                                    <img src="{% static 'assets/images/logo-sm-light.png' %}" alt="logo-light" height="25">
+                                    <img src="{% static 'assets/images/FBR_Pakistan_logo.png' %}" alt="logo-light" height="50">
                                 </span>
                             </a>
                         </div>
@@ -77,7 +77,7 @@
                  <div class="navbar-brand-box">
                     <a href="{% url  'view_mills' %}" class="logo logo-light">
                         <span class="logo-sm">
-                            <img src="{% static 'assets/images/fbr-logo-white.png' %}" alt="logo-sm-light" height="24" style="margin-inline-start: -7px;">
+                            <img src="{% static 'assets/images/fbr-logo-white.png' %}" alt="logo-sm-light" height="25" style="margin-inline-start: -7px;">
                         </span>
                         <span class="logo-lg">
                             <img src="{% static 'assets/images/fbr-logo-white.png' %}" alt="logo-light" height="80" style="margin-inline-start: -22px;">
@@ -174,7 +174,7 @@
                                             
                                             <li><a href="{% url 'add_fbr_paym_acc' %}">Add Payment Account</a></li>
                                             <li><a href="{% url 'list_fbr_payment_accounts' %}">Payment Account List</a></li>
-                                            <li><a href="{% url 'payment_records' %}">Payment Record List</a></li>
+                                            
 
                                         </ul>
                                     </li>
@@ -283,8 +283,19 @@
                                         </a>
                                         <ul class="sub-menu">
                                              
-                                            <li><a href="{% url 'list_fbr_payment_accounts' %}">Payment Account List</a></li>
-                                            <li><a href="{% url 'payment_records' %}">Payment Record List</a></li>
+                                            <li><a href="{% url 'list_fbr_payment_accounts' %}">Payment Account List</a></li>                                            
+
+                                        </ul>
+                                    </li>
+
+                                    <!--Invoices-->
+                                    <li>
+                                        <a href="#" class="has-arrow waves-effect">
+                                            <i class="ri-bank-card-line"></i>
+                                            <span>Invoices</span>
+                                        </a>
+                                        <ul class="sub-menu">
+                                            <li><a href="{% url 'invoices_records' %}">Invoice List</a></li>
 
                                         </ul>
                                     </li>

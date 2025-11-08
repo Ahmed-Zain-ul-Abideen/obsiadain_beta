@@ -9,7 +9,7 @@
             <div class="card-body d-flex justify-content-between align-items-center">
                 {% if request.user.is_superuser %}
                     <h3 class="m-0 text-center w-100 fw-bold"> All Invoices List</h3>
-                {% elseif request.user|has_group:"Mill_owners" %}
+                {% elif request.user|has_group:"Mill_owners" %}
                     <h3 class="m-0 text-center w-100 fw-bold"> My Invoices List</h3>
                 {% else %}
                 {% endif %}
@@ -39,7 +39,9 @@
                                     <th>Unit ID</th>
                                     <th>Invoice Number</th>
                                     <th>Total Amount</th>
+                                    <th>Payment  Record  Status</th> 
                                     <th>Download Invoice</th>
+                                    <th>Download  Payment  attachment</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -50,7 +52,8 @@
                                         <td>{{ forloop.counter }}</td>
                                         <td>{{ invoice.mill_unit_invoices_id }}</td>
                                         <td>{{ invoice.invoice_no }} </td>
-                                        <td>{{ invoice.remittance_amount }} </td>                                        
+                                        <td>{{ invoice.remittance_amount }} </td>   
+                                        <td>{{ invoice.invoice_paid_payment_proof.status_title }} </td>                                     
  
                                         <!-- Download -->
                                         <td>
@@ -65,16 +68,98 @@
                                             {% endif %}
                                         </td>
 
+
+                                        <td>
+                                            {% if request.user.is_superuser %}
+                                                {%  if  invoice.invoice_paid_payment_proof   %}
+
+                                                    {% if   invoice.invoice_paid_payment_proof.attachment %}
+                                                        {% with  url=invoice.invoice_paid_payment_proof.attachment.url|lower %}
+                                                            {% if url|slice:"-4:" == ".pdf" %}
+                                                                <a href="{{  invoice.invoice_paid_payment_proof.attachment.url }}" download class="btn btn-sm btn-outline-secondary w-100">
+                                                                    Download PDF
+                                                                </a>
+                                                            {% elif url|slice:"-4:" == ".jpg" or url|slice:"-5:" == ".jpeg" or url|slice:"-4:" == ".png" %}
+                                                                <a href="{{  invoice.invoice_paid_payment_proof.attachment.url }}" download class="btn btn-sm btn-outline-secondary w-100">
+                                                                    Download Image
+                                                                </a>
+                                                            {% else %}
+                                                                <a href="{{ invoice.invoice_paid_payment_proof.attachment.url }}" download class="btn btn-sm btn-outline-secondary w-100">
+                                                                    Download File
+                                                                </a>
+                                                            {% endif %}
+                                                        {% endwith %}
+                                                    {% else %}
+                                                        <span class="text-muted">No  attachment</span>
+                                                    {% endif %}
+                                                    
+                                                    
+                                                     
+
+                                                {%  else %}
+                                                   <span>payment  yet  not  submitted</span>
+                                                {% endif %}
+                                            {% elif request.user|has_group:"Mill_owners" %}
+
+                                                {%  if  invoice.invoice_paid_payment_proof   %}
+
+                                                    {% if   invoice.invoice_paid_payment_proof.attachment %}
+                                                        {% with  url=invoice.invoice_paid_payment_proof.attachment.url|lower %}
+                                                            {% if url|slice:"-4:" == ".pdf" %}
+                                                                <a href="{{  invoice.invoice_paid_payment_proof.attachment.url }}" download class="btn btn-sm btn-outline-secondary w-100">
+                                                                    Download PDF
+                                                                </a>
+                                                            {% elif url|slice:"-4:" == ".jpg" or url|slice:"-5:" == ".jpeg" or url|slice:"-4:" == ".png" %}
+                                                                <a href="{{  invoice.invoice_paid_payment_proof.attachment.url }}" download class="btn btn-sm btn-outline-secondary w-100">
+                                                                    Download Image
+                                                                </a>
+                                                            {% else %}
+                                                                <a href="{{ invoice.invoice_paid_payment_proof.attachment.url }}" download class="btn btn-sm btn-outline-secondary w-100">
+                                                                    Download File
+                                                                </a>
+                                                            {% endif %}
+                                                        {% endwith %}
+                                                    {% else %}
+                                                        <span class="text-muted">No  attachment</span>
+                                                    {% endif %}
+                                                    
+                                                    
+                                                     
+
+                                                {%  else %}
+                                                   <span>payment  yet  not  submitted</span>
+                                                {% endif %}
+                                                
+                                            {% else %}
+                                            {% endif %}
+                                             
+                                        </td>
+
                                         <!-- Actions -->
                                         <td>                                              
                                             {% if request.user.is_superuser %}
-                                                <a href="{% url 'add_payment_record' invoice.id %}"  class="btn btn-success btn-sm w-100">
-                                                    Analyze Invoice
-                                                </a>
-                                            {% elseif request.user|has_group:"Mill_owners" %}
-                                                <a href="{% url 'add_payment_record' invoice.id %}"  class="btn btn-success btn-sm w-100">
-                                                    Upload Payment Record
-                                                </a>
+                                                {%  if  invoice.invoice_paid_payment_proof   %}
+                                                    
+                                                    
+                                                    {%  if   invoice.invoice_paid_payment_proof.is_approved  %}
+                                                        <span>Invoice  Payment  Analyzed</span>
+                                                    {%  else %}
+                                                        <a href="{% url 'analyze_invoice_payment' invoice.id %}"  class="btn btn-success btn-sm w-100">
+                                                            Analyze Invoice payment  record
+                                                        </a>
+                                                    {% endif %}
+
+                                                {%  else %}
+                                                   <span>payment  yet  not  submitted</span>
+                                                {% endif %}
+                                            {% elif request.user|has_group:"Mill_owners" %}
+                                               {%  if   invoice.invoice_paid_payment_proof  %}
+                                                    <span>Invoice  payment  record  already  submitted</span>
+                                                {%  else %}
+                                                    <a href="{% url 'add_payment_record_to_invoice' invoice.id %}"  class="btn btn-success btn-sm w-100">
+                                                        Upload Payment Record
+                                                    </a>
+                                                {% endif %}
                                             {% else %}
                                             {% endif %}
                                             

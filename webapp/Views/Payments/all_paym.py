@@ -73,19 +73,19 @@ def  analyze_invoice_payment(request, invoice_id=None):
                 context = {
                     "invoice_no":   payment.invoice.invoice_no,
                     "remittance_amount": payment.invoice.remittance_amount,
-                    "unpaid_amount": unpaid_amount,
+                    "site_location": payment.invoice.site_location,
                     "status":status_title,
                     "unit_address":unit_address,
 
                 }
 
-                email  =  payment.mill.owner.email
+                email  =  payment.invoice.mill_unit_invoices.mill.owner.email
 
                 print("mill  owner  email  ",email)
 
                 # Send reset email
                 send_html_email(
-                    subject="Payment  Inspection Update",
+                    subject="Invoice  Payment  Anaylzed",
                     to_email=email,
                     context=context,
                     template_path="Emails/payment_inspection_email.html"

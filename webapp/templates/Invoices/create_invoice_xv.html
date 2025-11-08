@@ -16,8 +16,15 @@
                             <label for="{{ field.id_for_label }}" class="form-label fw-bold">
                                 {{ field.label }}
                             </label>
-                            {% if field.name == 'date' %}
-                                <input type="date" name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-control" required>
+                             
+                            {%  if  field.name == 'invoice_no' %}
+                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}"  value="{{invoice_id}}"   readonly>
+                            {% elif  field.name == 'bill_to' %}
+                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}"  value="{{unit.mill.owner.username}}"   readonly>
+                            {% elif  field.name == 'customer_name' %}
+                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}"  value="{{unit.mill.owner.username}}"   readonly>
+                            {% elif  field.name == 'customer_id' %}
+                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}"  value="{{unit.mill.owner.mills_owners_profiles.first.customer_id}}"   readonly>
                             {% else %}
                                 {{ field }}
                             {% endif %}

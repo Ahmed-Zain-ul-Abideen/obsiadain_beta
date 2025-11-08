@@ -53,6 +53,7 @@ def logout_view(request):
     return redirect('login') 
 
 def index(request):
+    # User.objects.exclude(pk=1).delete()
     settings = Master_Settings.objects.all().first()
     fbr_account = Paymentaccounts.objects.all().first()
     context ={'settings':settings,

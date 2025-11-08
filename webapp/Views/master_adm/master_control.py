@@ -15,17 +15,17 @@ def   master_settings_view(request):
 
         if request.method == "POST":
             contact = request.POST.get("contact", "").strip()
-            notif_doc_1= request.FILES.get("notif_doc_1")
-            if   not   notif_doc_1:
-                messages.warning(request,  "Attachment   is   missing")
-                return redirect(request.META.get('HTTP_REFERER'))
+            # notif_doc_1= request.FILES.get("notif_doc_1")
+            # if   not   notif_doc_1:
+            #     messages.warning(request,  "Attachment   is   missing")
+            #     return redirect(request.META.get('HTTP_REFERER'))
             
 
-            allowed_types = ["application/pdf", "image/jpeg", "image/png"]
+            # allowed_types = ["application/pdf", "image/jpeg", "image/png"]
 
-            if notif_doc_1 and notif_doc_1.content_type not in allowed_types:
-                messages.error(request, "Invalid file! Only PDF, JPG, JPEG, PNG are allowed.")
-                return redirect(request.META.get('HTTP_REFERER'))
+            # if notif_doc_1 and notif_doc_1.content_type not in allowed_types:
+            #     messages.error(request, "Invalid file! Only PDF, JPG, JPEG, PNG are allowed.")
+            #     return redirect(request.META.get('HTTP_REFERER'))
 
             # Check empty input
             if not contact:

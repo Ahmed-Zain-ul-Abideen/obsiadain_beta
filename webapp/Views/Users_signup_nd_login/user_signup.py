@@ -2,6 +2,14 @@ from django.contrib.auth.models import User, Group
 from   django.contrib   import   messages
 from   webapp.models  import   MillOwnersProfile
 from   django.shortcuts   import   redirect,render
+import  random
+import   string
+
+def generate_customerid():
+    """Generate a unique alphanumeric NTN starting with 'MILL-'."""
+    suffix = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+    return  f"CUST-{suffix}"
+
 
 def register_user(request):
     if   request.user.is_authenticated:
@@ -44,10 +52,13 @@ def register_user(request):
 
             user.save()
 
+            customer_id  =  generate_customerid()  + '__' +  str(user.pk)
+
             MillOwnersProfile.objects.create(
                 owner_p_id=user.pk,
                 company=company,
-                designation=designation
+                designation=designation,
+                customer_id =  customer_id
 
             )
 

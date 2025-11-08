@@ -16,8 +16,8 @@
 
                     <tr>
                         <td align="center" style="padding-bottom:20px;">
-                            <h2 style="color:#2c3e50; margin:0; font-size:26px;">Payment Status Update</h2>
-                            <p style="color:#7f8c8d; font-size:14px;">Your unit's payment record has been updated.</p>
+                            <h2 style="color:#2c3e50; margin:0; font-size:26px;">Invoice  Payment Status Update</h2>
+                            <p style="color:#7f8c8d; font-size:14px;">Your unit's invoice  payment record has been updated.</p>
                         </td>
                     </tr>
 
@@ -34,17 +34,17 @@
                             <table width="100%" cellpadding="10" style="border-collapse: collapse;">
                                 <tr>
                                     <td style="background:#ecf0f1; border-radius:6px; font-size:15px;">
-                                        <strong>Total Amount:</strong> Rs {{ total_amount }}
+                                        <strong>Invoice  No: </strong>  {{ invoice_no }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="background:#d1f7d6; border-radius:6px; font-size:15px;">
-                                        <strong>Paid Amount:</strong> Rs {{ paid_amount }}
+                                        <strong>Remittance  Amount:</strong> Rs {{ remittance_amount }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="background:#ffe6e6; border-radius:6px; font-size:15px;">
-                                        <strong>Unpaid Amount:</strong> Rs {{ unpaid_amount }}
+                                        <strong>Site  Location:</strong>  {{ site_location }}
                                     </td>
                                 </tr>
                                 <tr>
@@ -54,12 +54,12 @@
                                 </tr>
                                 <tr>
                                     <td style="background:#e8f4ff; border-radius:6px; font-size:15px;">
-                                        <strong>Inspection   Closed ? :</strong> 
-                                        {% if is_approved %}
-                                            ✅ Yes
-                                        {% else %}
-                                            ❌ No
-                                        {% endif %}
+                                        <strong>Closed ? :</strong> 
+                                         
+                                        ✅ Yes
+                                         
+                                             
+                                         
                                     </td>
                                 </tr>
                             </table>

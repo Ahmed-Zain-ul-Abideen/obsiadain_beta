@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator
 from   django.contrib.auth.models   import   User
-
+from django.core.validators import RegexValidator
 
 
 #Mill_Owners_Profile
@@ -9,6 +9,12 @@ class   MillOwnersProfile(models.Model):
     owner_p =   models.ForeignKey(User,related_name="mills_owners_profiles", on_delete=models.CASCADE, default='')
     designation =  models.CharField(max_length=522)
     company =  models.CharField(max_length=522)
+    customer_id = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        validators=[RegexValidator(r'^[A-Za-z0-9\-]+$', 'NTN must be alphanumeric (letters, numbers, or dashes).')]
+    )
 
 
 #Mills
@@ -37,7 +43,12 @@ class   Mills_Units(models.Model):
     address = models.CharField(max_length=522)
     lat  = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     lon  = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
-    ntn =  models.PositiveIntegerField(null=True)
+    ntn = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        validators=[RegexValidator(r'^[A-Za-z0-9\-]+$', 'NTN must be alphanumeric (letters, numbers, or dashes).')]
+    )
     gst =  models.PositiveIntegerField(null=True)
     spindles_installed =  models.PositiveIntegerField(null=True) 
     rotors_installed =  models.PositiveIntegerField(null=True)
@@ -47,6 +58,12 @@ class   Mills_Units(models.Model):
     authorized_p_email = models.CharField(max_length=522,null=True)
     senior_p_contact = models.CharField(max_length=522,null=True)
     senior_p_email = models.CharField(max_length=522,null=True)
+    unit_id  = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        validators=[RegexValidator(r'^[A-Za-z0-9\-]+$', 'NTN must be alphanumeric (letters, numbers, or dashes).')]
+    )
 
 
 
@@ -67,6 +84,7 @@ class   Inspection_Reports(models.Model):
     tnt_software_online =  models.PositiveIntegerField(null=True)
     tnt_software_offline =  models.PositiveIntegerField(null=True)
     payment_recieved =  models.BooleanField(default=False)
+    remarks = models.TextField(blank=True, null=True)
     created_at =  models.DateTimeField(auto_now_add = True,null=True)
 
 
@@ -102,6 +120,30 @@ class   PaymentsRecords(models.Model):
 
 class   Master_Settings(models.Model): 
     contact = models.CharField(max_length=522,null=True)
+    obsidian_logo = models.FileField(
+        upload_to="static/master/",
+        validators=[FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png"])],
+        null=True,
+        blank=True
+    )
+    notf_1 = models.FileField(
+        upload_to="static/master/",
+        validators=[FileExtensionValidator(allowed_extensions=["pdf", "jpg", "jpeg", "png"])],
+        null=True,
+        blank=True
+    )
+    notf_2 = models.FileField(
+        upload_to="static/master/",
+        validators=[FileExtensionValidator(allowed_extensions=["pdf", "jpg", "jpeg", "png"])],
+        null=True,
+        blank=True
+    )
+    notf_3 = models.FileField(
+        upload_to="static/master/",
+        validators=[FileExtensionValidator(allowed_extensions=["pdf", "jpg", "jpeg", "png"])],
+        null=True,
+        blank=True
+    )
 
 
 
@@ -136,12 +178,12 @@ class  UsersLoginLogoutActivitiesLog(models.Model):
 
 class Invoice(models.Model):
     mill_unit_invoices = models.ForeignKey(Mills_Units, on_delete=models.CASCADE, related_name='mill_unit_invoices',null=True)
-    invoice_no = models.CharField(max_length=50, unique=True)
+    invoice_no = models.CharField(max_length=50,validators=[RegexValidator(r'^[A-Za-z0-9\-]+$', 'NTN must be alphanumeric (letters, numbers, or dashes).')], unique=True)
     customer_name = models.CharField(max_length=100)
     customer_id = models.CharField(max_length=50)
     bill_to = models.CharField(max_length=200)
     site_location = models.CharField(max_length=200, blank=True, null=True)
-    date = models.DateField()
+    date = models.DateField(auto_now_add = True,null=True)
     remittance_amount = models.DecimalField(max_digits=10, decimal_places=2)
     pdf_file = models.FileField(upload_to='static/invoices/', blank=True, null=True)
     created_by = models.ForeignKey(User,related_name="invoices_created_by", on_delete=models.SET_NULL, null=True, blank=True)

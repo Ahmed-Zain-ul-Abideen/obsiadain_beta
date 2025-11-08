@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages 
 from   webapp.Views.Invoices.forms   import   InvoiceForm, InvoiceItemFormSet
 from  webapp.models   import   *
-
+import   random,  string
 
 def   Invoices_records_list(request):
     if  not    request.user.is_authenticated:
@@ -11,19 +11,24 @@ def   Invoices_records_list(request):
         invoices  =  False
         if Invoice.objects.filter(mill_unit_invoices__mill__owner_id=request.user.pk).exists():
             invoices = Invoice.objects.filter(mill_unit_invoices__mill__owner_id=request.user.pk).order_by('-id')
-            for invoice in invoices:
-                print("inv", invoice.id, invoice.customer_name)
-        return render(request, "Payments/payment_records_list.html", {"invoices": invoices})
-        # if    Invoice.objects.filter(mill_unit_invoices__mills_units__owner_id=request.user.pk).exists():
-        #     invoices = Invoice.objects.filter(mill_unit_invoices__mills_units__owner_id=request.user.pk).order_by('-id')
-        #     for  invoice   in   invoices:
-        #         print("inv  ",invoice.id,"  ", invoice.customer_name)
-        # return render(request, "Payments/payment_records_list.html", {"invoices": invoices})  
-    # elif  request.user.is_superuser:
-    #     payments = PaymentsRecords.objects.all().order_by('-id')
-    #     return render(request, "Payments/payment_records_list.html", {"payments": payments})  
+            # for invoice in invoices:
+            #     print("inv", invoice.id, invoice.customer_name)
+        return render(request, "Invoices/invoice_list.html", {"Invoices": invoices})  
+    elif  request.user.is_superuser:
+        invoices  =  False
+        if  Invoice.objects.exists():
+            invoices = Invoice.objects.all().order_by('-id')
+            # for invoice in invoices:
+            #     print("inv", invoice.id, invoice.customer_name)
+        return render(request, "Invoices/invoice_list.html", {"Invoices": invoices})  
     else:
         return   render(request,'Denied/permission_denied.html')
+
+
+def  generate_invoiceid():
+    """Generate a unique alphanumeric NTN starting with 'MILL-'."""
+    suffix = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+    return  f"INV-{suffix}"
 
 def create_invoice(request,unit_id):
 
@@ -33,6 +38,13 @@ def create_invoice(request,unit_id):
         return   render(request,'Denied/permission_denied.html')
     else:
         pass
+
+
+    invoice_id  =   generate_invoiceid()
+
+    unit  =  Mills_Units.objects.filter(pk=unit_id).first()
+
+
 
     if request.method == 'POST':
         form = InvoiceForm(request.POST)
@@ -83,6 +95,7 @@ def create_invoice(request,unit_id):
             # Update total amount
             total = sum([item.balance for item in invoice.invoice_items.all()])
             invoice.remittance_amount = total
+            invoice.invoice_no  =  invoice_id  +  '__'  +  str(invoice.id)
             invoice.save()
 
             messages.success(request, "Invoice created successfully!")
@@ -93,7 +106,7 @@ def create_invoice(request,unit_id):
         form = InvoiceForm()
         formset = InvoiceItemFormSet()
 
-    return render(request, 'Invoices/create_invoice_xv.html', {'form': form, 'formset': formset})
+    return render(request, 'Invoices/create_invoice_xv.html', {'form': form, 'formset': formset,"unit":unit,"invoice_id":invoice_id})
 
 
 # def generate_invoice_pdf(request, invoice_id):
