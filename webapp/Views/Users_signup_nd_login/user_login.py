@@ -102,6 +102,14 @@ def logout_view(request):
     return redirect('login') 
 
 def index(request):
+    settings = Master_Settings.objects.all().first()
+    fbr_account = Paymentaccounts.objects.all().first()
+    context ={'settings':settings,
+              'fbr_account':fbr_account}
+    return render(request, 'landing_page.html', context)
+
+
+def  extra(request):
     test_generate_invoice_pdf(8)
     #User.objects.filter(pk=8).delete()
     # Invoice.objects.filter(pk=12).delete()

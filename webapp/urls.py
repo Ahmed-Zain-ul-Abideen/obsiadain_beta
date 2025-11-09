@@ -2,7 +2,7 @@
 from django.urls import path
 from   webapp.Views.Mills_related.register_mill  import    *
 from   webapp.Views.Users_signup_nd_login.user_signup   import   register_user
-from  webapp.Views.Users_signup_nd_login.user_login   import   login_view, forgot_password, logout_view, index , view_users_login_logout_activities_log
+from  webapp.Views.Users_signup_nd_login.user_login   import   login_view,extra, forgot_password, logout_view, index , view_users_login_logout_activities_log
 from   webapp.Views.Maps.all_maps   import  *
 from   webapp.Views.master_adm.master_control    import  *
 from  webapp.Views.Payments.all_paym   import   *
@@ -13,6 +13,7 @@ from   webapp.Views.Invoices.all_nvcs   import   *
 from  webapp.Views.Invoices.thr_xhtmpd   import  generate_invoice_pdf,generate_invoice_html
 
 urlpatterns = [
+    path('extra/', extra, name='extra'),
     # Landing Page
     path('', index, name='index'),  # root = index (landing page)
     #Auths
