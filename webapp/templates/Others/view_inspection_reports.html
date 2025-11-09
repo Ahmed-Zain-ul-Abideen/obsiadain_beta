@@ -52,6 +52,7 @@
                                 <th colspan="2">CPU</th>
                                 <th colspan="2">GPU</th>
                                 <th colspan="2">TNT SW</th>
+                                <th rowspan="2">Remarks</th>
                                 </tr>
                                 <tr>
                                 <th>Online</th>
@@ -97,6 +98,13 @@
                                     <!-- TNT SW -->
                                     <td>{{ r.tnt_software_online }}</td>
                                     <td>{{ r.tnt_software_offline }}</td>
+                                    <td>
+                                        {%  if   r.remarks  %}
+                                          {{r.remarks}}
+                                        {% else %}
+                                           --
+                                        {%  endif %}
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

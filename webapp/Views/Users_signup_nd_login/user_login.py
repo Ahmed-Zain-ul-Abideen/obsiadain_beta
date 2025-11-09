@@ -113,9 +113,9 @@ def  extra(request):
     test_generate_invoice_pdf(8)
     #User.objects.filter(pk=8).delete()
     # Invoice.objects.filter(pk=12).delete()
-    # users =  User.objects.all()
-    # for  user  in   users:
-    #     print("user  ",user.username)
+    users =  User.objects.all()
+    for  user  in   users:
+        print("user  ",user.username)
     settings = Master_Settings.objects.all().first()
     fbr_account = Paymentaccounts.objects.all().first()
     context ={'settings':settings,

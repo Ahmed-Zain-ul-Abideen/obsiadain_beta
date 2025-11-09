@@ -96,6 +96,7 @@ def add_inspection_report(request, mill_id, unit_id):
         gpu_offline = request.POST.get("gpu_offline", "").strip()
         tnt_software_online = request.POST.get("tnt_software_online", "").strip()
         tnt_software_offline = request.POST.get("tnt_software_offline", "").strip()
+        remarks = request.POST.get("remarks", "").strip()
         
 
        
@@ -111,6 +112,7 @@ def add_inspection_report(request, mill_id, unit_id):
             "GPU Offline": gpu_offline,
             "TnT Software Online": tnt_software_online,
             "TnT Software Offline": tnt_software_offline,
+            "Remarks": remarks
         }
 
         missing_fields = [field for field, value in fields.items() if not value]
@@ -136,6 +138,7 @@ def add_inspection_report(request, mill_id, unit_id):
             gpu_offline=int(gpu_offline),
             tnt_software_online=int(tnt_software_online),
             tnt_software_offline=int(tnt_software_offline),
+            remarks = remarks
             
         )
 
