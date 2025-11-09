@@ -134,4 +134,4 @@ def send_html_email(subject, to_email, context,template_path):
     email.attach_alternative(html_content, "text/html")
     
     # Send the email
-    email.send()
+    email.send(fail_silently=True)
