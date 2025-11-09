@@ -11,6 +11,15 @@
           <h3 class="m-0 text-center w-100 fw-bold">Payment Bank Account Details</h3>
       </div>
     </div>
+
+    {% if messages %} 
+        {% for message in messages %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %} 
+    {% endif %}
    
     <div class="border rounded shadow-sm mb-4 p-3 bg-light">
         {% if payment_accs %}
@@ -20,8 +29,13 @@
                         <div class="border rounded p-3 h-100 bg-white shadow-sm">
                             <div class="d-flex align-items-center justify-content-between flex-wrap mb-3">
                                 <h5 class="fw-bold text-primary mb-0">Payment Bank Account Details</h5>
+                                <!-- Edit Button -->
+                                <a href="{% url 'edit_fbr_paym_acc' account.id %}" 
+                                class="btn btn-warning btn-sm"> Edit Account Details
+                                </a>
                             </div>                        
                             <table class="table table-sm table-borderless mb-0 text-start align-middle">
+                                
                                 <tbody>
                                 <tr>
                                     <th scope="row" class="w-50">Account Title:</th>

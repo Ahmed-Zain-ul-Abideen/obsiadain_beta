@@ -19,7 +19,7 @@
           {% endfor %} 
         {% endif %}
 
-        <form  method="POST">
+        <form id="cameraForm" method="POST">
           {% csrf_token %}
 
           <div class="row">
@@ -71,26 +71,32 @@
           </div>
 
           <div class="row">
+            <!-- Total Cameras -->
             <div class="col-md-4">
               <label>Number of Cameras Installed</label>
-                <input type="number" id="total_cameras"  name="num_camera_installed" class="form-control">
-            </div>
-            <div class="col-md-4">
-              <div class="mb-3">
-                <label>Cameras Online</label>
-                <input type="number" id="online_cameras"  name="cameras_online" class="form-control">
-              </div>
+              <input type="number" id="total_cameras" name="num_camera_installed" class="form-control">
             </div>
 
+            <!-- Online Cameras -->
             <div class="col-md-4">
-              <div class="mb-3">
-                <label>Cameras Offline</label>
-                <input type="number" id="offline_cameras"  name="cameras_offline" class="form-control">
-              </div>
+              <label>Cameras Online</label>
+              <input type="number" id="online_cameras" name="cameras_online" class="form-control" disabled>
+            </div>
+
+            <!-- Offline Cameras (auto-calculated) -->
+            <div class="col-md-4">
+              <label>Cameras Offline</label>
+              <input type="number" id="offline_cameras" name="cameras_offline" class="form-control" readonly>
             </div>
           </div>
 
-          <div class="row">
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <span id="camera_error" class="text-danger fw-semibold"></span>
+            </div>
+          </div>
+
+          <div class="row mt-2">
             <div class="col-md-4">
               <label>CPU Online</label>
             <input type="number" name="cpu_online" class="form-control">
@@ -151,55 +157,59 @@
     </div>
   </div>
 </div>
-<!-- jQuery -->
+<!-- ✅ Script -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-$(document).ready(function() {
+$(document).ready(function () {
+  const $total = $("#total_cameras");
+  const $online = $("#online_cameras");
+  const $offline = $("#offline_cameras");
+  const $error = $("#camera_error");
 
-  function validateCameras() {
-    let total = parseInt($("#total_cameras").val()) || 0;
-    let online = parseInt($("#online_cameras").val()) || 0;
-    let offline = parseInt($("#offline_cameras").val()) || 0;
-    let $error = $("#camera_error");
-    let isValid = true;
+  function validateAndCalculate() {
+    const total = parseInt($total.val()) || 0;
+    const online = parseInt($online.val()) || 0;
+    let offline = total - online;
 
-    // Reset error message
+    // Reset messages
     $error.text("");
 
-    // Validation rules
     if (online > total) {
       $error.text("⚠️ Online cameras cannot exceed total installed cameras.");
-      isValid = false;
-    } 
-    else if (offline > total) {
-      $error.text("⚠️ Offline cameras cannot exceed total installed cameras.");
-      isValid = false;
-    } 
-    else if (online + offline > total) {
-      $error.text("⚠️ Sum of online and offline cameras cannot exceed total installed cameras.");
-      isValid = false;
-    } 
-    else if (online + offline < total) {
-      $error.text("ℹ️ Total cameras not fully distributed (online + offline < total).");
-      isValid = false;
+      $offline.val("");
+      return false;
     }
 
-    return isValid;
+    if (offline < 0) offline = 0;
+    $offline.val(offline);
+
+    return true;
   }
 
-  // Validate on input change
-  $("#total_cameras, #online_cameras, #offline_cameras").on("input", function() {
-    validateCameras();
+  // Step 1: When user enters total
+  $total.on("input", function () {
+    const total = parseInt($total.val());
+    if (total > 0) {
+      $online.prop("disabled", false); // enable online input
+    } else {
+      $online.prop("disabled", true).val("");
+      $offline.val("");
+    }
+    validateAndCalculate();
   });
 
-  // Prevent form submission if invalid
-  $("#cameraForm").on("submit", function(e) {
-    if (!validateCameras()) {
-      e.preventDefault(); // Stop form submission
-      alert("⚠️ Please correct the camera fields before submitting the form.");
+  // Step 2: When user enters online cameras
+  $online.on("input", function () {
+    validateAndCalculate();
+  });
+
+  // Step 3: Prevent form submission if invalid
+  $("#cameraForm").on("submit", function (e) {
+    if (!validateAndCalculate()) {
+      e.preventDefault();
+      alert("⚠️ Please correct camera counts before submitting.");
     }
   });
-
 });
 </script>
 

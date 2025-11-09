@@ -360,6 +360,58 @@ def  add_fbr_payment_account(request):
         )
 
         messages.success(request, "FBR  payment  account  added  successfully")
-        return redirect("view_mills")
+        return redirect("list_fbr_payment_accounts")
 
     return render(request, "Payments/add_fbr_bank_details.html")
+
+
+
+
+
+
+def  edit_fbr_payment_account(request,account_id):
+
+    if  not    request.user.is_authenticated:
+        return redirect('login')
+    
+    if   request.user.is_superuser:
+        pass
+    else:
+        return   render(request,'Denied/permission_denied.html')
+    
+    fbr_account = Paymentaccounts.objects.filter( pk=account_id).first()
+    print("fbr_account",fbr_account)
+    if request.method == "POST":
+        iban_number = request.POST.get("iban_number", "").strip()
+        account_title = request.POST.get("account_title", "").strip()
+        bank_name = request.POST.get("bank_name", "").strip() 
+
+        print("iban_number",iban_number)
+        print("account_title",account_title)
+        fields = {
+            "iban_number": iban_number,
+            "account_title": account_title,
+            "bank_name": bank_name
+                
+        }
+
+        missing_fields = [field for field, value in fields.items() if not value]
+
+        if missing_fields:
+            msg = ", ".join(missing_fields) + " " + ("is missing" if len(missing_fields)==1 else "are missing")
+            messages.warning(request, msg)
+            return redirect(request.META.get('HTTP_REFERER'))
+        
+
+        fbr_account = Paymentaccounts.objects.filter( pk=account_id).update(iban_number =iban_number, account_title= account_title, bank_name=bank_name)
+        # fbr_account.iban_number =  iban_number,
+        # fbr_account.account_title = account_title,
+        # fbr_account.bank_name = bank_name
+
+        # fbr_account.save()
+
+        messages.success(request, "Account details updated successfully!")
+        return redirect("list_fbr_payment_accounts") 
+    
+    context = {'fbr_account':fbr_account}
+    return render(request, "Payments/edit_fbr_bank_details.html", context)

@@ -55,6 +55,7 @@ urlpatterns = [
     #Payments  FBR
     path('list-fbr-payment-accounts/',  list_fbr_payment_accounts, name='list_fbr_payment_accounts'),
     path('add-fbr-paym-acc/',  add_fbr_payment_account, name='add_fbr_paym_acc'),
+    path('edit-fbr-paym-acc/<int:account_id>/',  edit_fbr_payment_account, name='edit_fbr_paym_acc'),
 
     #Payment  attachments
     path('add-payment-record/<int:mill_id>/<int:unit_id>/',  add_payment_record, name='add_payment_record'),
