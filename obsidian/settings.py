@@ -117,7 +117,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'ijazhooria321@gmail.com'
 EMAIL_HOST_PASSWORD = 'auncuvezljbeqvdl'
-DOMAIN = "http://192.168.18.85:8003"
+DOMAIN = "https://obsidian-fbr.onrender.com"
 
 AUTH_PASSWORD_VALIDATORS = [
     {

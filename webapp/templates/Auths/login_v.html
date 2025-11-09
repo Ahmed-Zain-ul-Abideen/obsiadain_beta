@@ -1,0 +1,173 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Video Analytics System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+    <meta content="Themesdesign" name="author" />
+    <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico' %}">
+
+    <script src="{% static 'assets/js/layout.js' %}"></script>
+    <link href="{% static 'assets/css/bootstrap.min.css' %}" id="bootstrap-style" rel="stylesheet" type="text/css" />
+    <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'assets/css/app.min.css' %}" id="app-style" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<div class="auth-maintenance d-flex align-items-center min-vh-100">
+    <div class="bg-overlay bg-light"></div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="auth-full-page-content d-flex min-vh-100 py-sm-5 py-4">
+                    <div class="w-100">
+                        <div class="d-flex flex-column h-100 py-0 py-xl-3">
+                            <div class="text-center mb-4">
+                                <a href="{% url 'index' %}">
+                                    <img src="{% static 'assets/images/FBR_Pakistan_logo.png' %}" alt="" height="120" class="auth-logo mx-auto">
+                                </a>
+                                <p class="text-muted mt-2">Empowering you to create smarter, faster, and more impactful tracking and tracing.</p>
+                            </div>
+
+                            <div class="card my-auto overflow-hidden">
+                                <div class="row g-0">
+                                    <div class="col-lg-12">
+                                        <div class="p-lg-5 p-4">
+                                            <div class="text-center mt-1">
+                                                <h4 class="font-size-18">Welcome Back!</h4>
+                                                <p class="text-muted">Sign in to continue on Video Analytics System.</p>
+                                            </div>
+
+                                            <form method="POST" action="{% url 'login' %}" class="auth-input">
+                                                {% csrf_token %}
+                                                {% if messages %}
+                                                    {% for message in messages %}
+                                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                                            {{ message }}
+                                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                        </div>
+                                                    {% endfor %}
+                                                {% endif %}
+
+                                                <div class="mb-2">
+                                                    <label for="id_username" class="form-label">Username</label>
+                                                    <input type="text" class="form-control" id="id_username" name="username" required>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="id_password" class="form-label">Password</label>
+                                                    <input type="password" class="form-control" id="id_password" name="password" required>
+                                                </div>
+
+                                                <div class="mt-3">
+                                                    <button class="btn btn-primary w-100" type="submit">Login</button>
+                                                </div>
+                                            </form>
+
+                                            <div class="mt-3 text-center">
+                                                <a href="#" class="text-primary" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
+                                                    Forgot Password?
+                                                </a>
+                                            </div>
+
+                                            <div class="mt-4 text-center">
+                                                <p class="mb-0">Don't have an account? <a href="{% url 'register' %}" class="fw-medium text-primary">Register</a></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-5 text-center">
+                                <p class="mb-0">© <script>document.write(new Date().getFullYear())</script> Video Analytics System. Crafted with ❤️ by
+                                    <a href="https://obsidian.com.pk" target="_blank">Obsidian</a>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= FORGOT PASSWORD MODAL ================= -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg rounded-4">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="forgotPasswordLabel">Recover Password - User Validation</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="fp-alert-area"></div>
+                <form id="forgotPasswordForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="fp-username" class="form-label">Username</label>
+                        <input type="text" id="fp-username" name="username" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fp-email" class="form-label">Email</label>
+                        <input type="email" id="fp-email" name="email" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JAVASCRIPT -->
+<script src="{% static 'assets/libs/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'assets/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'assets/js/app.js' %}"></script>
+
+<script>
+$(document).ready(function() {
+    $('#forgotPasswordForm').on('submit', function(e) {
+        e.preventDefault();
+        $("#fp-alert-area").html(""); // clear old alerts
+
+        $.ajax({
+            url: "{% url 'forgot_password' %}",
+            method: "POST",
+            data: {
+                username: $('#fp-username').val(),
+                email: $('#fp-email').val(),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(response) {
+                if (response.success) {
+                    $("#fp-alert-area").html(
+                        '<div class="alert alert-success">Password reset link sent to your email.</div>'
+                    );
+                    setTimeout(() => {
+                        $('#forgotPasswordModal').modal('hide');
+                        $('#fp-alert-area').html('');
+                        $('#forgotPasswordForm')[0].reset();
+                    }, 2500);
+                } else {
+                    let msg = "";
+                    if (response.error_type === "username")
+                        msg = "Invalid username. Please enter the correct username.";
+                    else if (response.error_type === "email")
+                        msg = "Invalid email. The provided email does not match the username.";
+                    else
+                        msg = "Please enter correct username and email.";
+
+                    $("#fp-alert-area").html('<div class="alert alert-warning">' + msg + '</div>');
+                }
+            },
+            error: function() {
+                $("#fp-alert-area").html('<div class="alert alert-danger">Server error. Try again later.</div>');
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>
