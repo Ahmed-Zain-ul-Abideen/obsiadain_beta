@@ -53,7 +53,14 @@
                                         <td>{{ invoice.mill_unit_invoices_id }}</td>
                                         <td>{{ invoice.invoice_no }} </td>
                                         <td>{{ invoice.remittance_amount }} </td>   
-                                        <td>{{ invoice.invoice_paid_payment_proof.status_title }} </td>                                     
+                                        <td>
+                                            {%  if  invoice.invoice_paid_payment_proof   %}
+                                                {{ invoice.invoice_paid_payment_proof.status_title }}
+                                            {% else %} 
+                                                payment  yet  not  submitted
+                                            {% endif %}
+
+                                        </td>                                     
  
                                         <!-- Download -->
                                         <td>
