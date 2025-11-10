@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-primary text-white text-center py-3 rounded-top-4">
+            <h3 class="mb-0">Create Invoice</h3>
+        </div>
+        <div class="card-body bg-light">
+            <form method="POST" class="p-3">
+                {% csrf_token %}
+
+                <!-- Base Invoice Fields -->
+                <div class="row mb-3">
+                    {% for field in form %}
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
+                            {% if field.name == 'invoice_no' %}
+                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}" value="{{invoice_id}}" class="form-control" readonly>
+                            {% elif field.name == 'bill_to' or field.name == 'customer_name' %}
+                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}" value="{{unit.mill.owner.username}}" class="form-control" readonly>
+                            {% elif field.name == 'customer_id' %}
+                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}" value="{{unit.mill.owner.mills_owners_profiles.first.customer_id}}" class="form-control" readonly>
+                            {% else %}
+                                {{ field }}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- 🟦 SOFTWARE SECTION -->
+                <div class="mt-4 mb-2 p-2 bg-secondary bg-opacity-25 rounded">
+                    <h5 class="fw-bold text-primary mb-3">Software Section</h5>
+                    <div class="table-responsive">
+                        {{ software_formset.management_form }}
+                        <table class="table table-striped table-bordered align-middle" id="software-items-table">
+                            <thead class="table-primary text-center">
+                                <tr>
+                                    <th>Sr#</th>
+                                    <th>Item Name</th>
+                                    <th>PCS</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Payment</th>
+                                    <th>Balance</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody> 
+                                {% for form in software_formset %}
+                                <tr class="software-row">
+                                    <td class="serial-number text-center">{{ forloop.counter }}</td>
+                                    <td>{{ form.item_name }}</td>
+                                    <td>{{ form.pcs }}</td>
+                                    <td>{{ form.description }}</td>
+                                    <td>{{ form.amount }}</td>
+                                    <td>{{ form.payment }}</td>
+                                    <td>{{ form.balance }}</td>
+                                    <td class="text-center">
+                                        <div style="display:none;">{{ form.DELETE }}</div>
+                                        <button type="button" class="btn btn-sm btn-danger remove-software-row">🗑</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-end mb-4">
+                            <button type="button" class="btn btn-outline-primary" id="add-software-row">➕ Add Software Item</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 🟩 HARDWARE SECTION -->
+                <div class="mt-4 mb-2 p-2 bg-secondary bg-opacity-25 rounded">
+                    <h5 class="fw-bold text-success mb-3">Hardware Section</h5>
+                    <div class="table-responsive">
+                        {{ hardware_formset.management_form }}
+                        <table class="table table-striped table-bordered align-middle" id="hardware-items-table">
+                            <thead class="table-success text-center">
+                                <tr>
+                                    <th>Sr#</th>
+                                    <th>Item Name</th>
+                                    <th>PCS</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Payment</th>
+                                    <th>Balance</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody> 
+                                {% for form in hardware_formset %}
+                                <tr class="hardware-row">
+                                    <td class="serial-number text-center">{{ forloop.counter }}</td>
+                                    <td>{{ form.item_name }}</td>
+                                    <td>{{ form.pcs }}</td>
+                                    <td>{{ form.description }}</td>
+                                    <td>{{ form.amount }}</td>
+                                    <td>{{ form.payment }}</td>
+                                    <td>{{ form.balance }}</td>
+                                    <td class="text-center">
+                                        <div style="display:none;">{{ form.DELETE }}</div>
+                                        <button type="button" class="btn btn-sm btn-danger remove-hardware-row">🗑</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-outline-success" id="add-hardware-row">➕ Add Hardware Item</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-success px-4 py-2">Save Invoice</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 🧠 JS Logic -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    function setupDynamicTable(tableId, addBtnId, rowClass, removeClass, totalFormId) {
+        const addBtn = document.getElementById(addBtnId);
+        const tableBody = document.querySelector(`#${tableId} tbody`);
+        const totalForms = document.querySelector(`#${totalFormId}`);
+
+        function updateSerials() {
+            tableBody.querySelectorAll(".serial-number").forEach((td, idx) => {
+                td.textContent = idx + 1;
+            });
+        }
+
+        addBtn.addEventListener("click", () => {
+            const count = parseInt(totalForms.value);
+            const firstRow = tableBody.querySelector(`.${rowClass}`);
+            const newRow = firstRow.cloneNode(true);
+
+            newRow.querySelectorAll("input, textarea, select").forEach(input => {
+                if (input.name.includes("-DELETE")) {
+                    input.checked = false;
+                    return;
+                }
+                const newName = input.name.replace(/-(\d+)-/, `-${count}-`);
+                const newId = input.id.replace(/-(\d+)-/, `-${count}-`);
+                input.name = newName;
+                input.id = newId;
+                if (input.type !== "hidden" && input.type !== "checkbox") input.value = "";
+            });
+
+            tableBody.appendChild(newRow);
+            totalForms.value = count + 1;
+            updateSerials();
+        });
+
+        tableBody.addEventListener("click", e => {
+            if (e.target.classList.contains(removeClass)) {
+                const rows = tableBody.querySelectorAll("tr");
+                if (rows.length <= 1) {
+                    alert("At least one item is required.");
+                    return;
+                }
+                const row = e.target.closest("tr");
+                const deleteInput = row.querySelector("input[name$='-DELETE']");
+                if (deleteInput) {
+                    deleteInput.checked = true;
+                    row.style.display = "none";
+                }
+                updateSerials();
+            }
+        });
+
+        updateSerials();
+    }
+
+    // Initialize for both tables
+    setupDynamicTable("software-items-table", "add-software-row", "software-row", "remove-software-row", "id_software_invoice_items-TOTAL_FORMS");
+    setupDynamicTable("hardware-items-table", "add-hardware-row", "hardware-row", "remove-hardware-row", "id_hardware_invoice_items-TOTAL_FORMS");
+
+});
+</script>
+{% endblock %}

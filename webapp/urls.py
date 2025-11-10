@@ -10,7 +10,7 @@ from  webapp.Views.Others.others   import  *
 from  webapp.Views.Users_signup_nd_login.set_pass   import   set_password_view
 from   webapp.Chat.for_chats   import   *
 from   webapp.Views.Invoices.all_nvcs   import   *
-from  webapp.Views.Invoices.thr_xhtmpd   import  generate_invoice_pdf,generate_invoice_html
+from  webapp.Views.Invoices.thr_xhtmpd   import  generate_invoice_pdf,generate_invoice_html , generate_bifurcate_invoice_pdf 
 
 urlpatterns = [
     path('extra/', extra, name='extra'),
@@ -88,6 +88,13 @@ urlpatterns = [
     path("invoices-records/", Invoices_records_list, name="invoices_records"),
     path('analyze-invoice-payment/<int:invoice_id>/', analyze_invoice_payment, name='analyze_invoice_payment'),
     path('invoice/<int:invoice_id>/html/', generate_invoice_html, name='generate_invoice_html'),
+
+
+
+    #Invoices  Bifurcate
+    path('invoice-bifurcate/create/<int:unit_id>/', create_invoice_bufricate, name='create_invoice_bifurcate'),
+    path('invoice-bifurcate/<int:invoice_id>/pdf/', generate_bifurcate_invoice_pdf, name='generate_bifurcate_invoice_pdf'),
+
 
 
     #Chats

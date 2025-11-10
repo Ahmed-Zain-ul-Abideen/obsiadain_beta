@@ -186,7 +186,7 @@ def   register_user_verify_signup(request):
 
             )
 
-            messages.success(request, 'User  registered  successfully !')
+            messages.success(request, 'User  registered  successfully , Check  Verify  Sign  Up   email !')
             return redirect('login')
         except  Exception  as  e:
 
