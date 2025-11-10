@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+    body { font-family: Arial, sans-serif; font-size: 12px; margin: 25px; color: #000; }
+    .invoice-box { width: 100%; border: 1px solid #ddd; padding: 25px; }
+    .header-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+    .header-table td {
+        vertical-align: middle;
+        text-align: center;
+        border-bottom: 2px solid #000;
+        padding: 5px;
+    }
+    .hdr-table {
+        width: 100%;
+        border: none !important;
+        border-collapse: collapse;
+        margin: 0;
+        padding: 0;
+        border-spacing: 0;
+    }
+
+    .hdr-table tr {
+        line-height:   24; /* tighter row height */
+        margin: 0;
+        padding: 0;
+    }
+
+    .hdr-table td {
+        border: none !important;
+        padding: 2px 5px !important; /* reduce cell padding */
+        line-height: 1 !important; /* compact text vertically */
+        vertical-align: middle;
+    }
+    .header-logo img { width: 120px; }
+    .header-title { text-align: center; font-size: 22px; font-weight: bold; }
+    .highlight { background-color: #e6e6e6; padding: 6px; font-weight: bold; margin-top: 15px; }
+    .items th, .items td { border: 1px solid #777; padding: 6px; text-align: center; }
+    .items th { background-color: #f2f2f2; }
+    .section-title { margin-top: 20px; font-weight: bold; font-size: 14px; text-decoration: underline; }
+    .total-row td { font-weight: bold; background-color: #f9f9f9; }
+</style>
+</head>
+<body>
+<div class="invoice-box">
+    {% load static %}
+
+    <!-- Header Section -->
+    <table class="header-table">
+        <tr>
+            <td class="header-logo">
+                <img src="{% static 'assets/images/obsidian_logo.png' %}" alt="Logo">
+            </td>
+            <td class="header-title">INVOICE</td>
+            <td class="header-right"></td>
+        </tr>
+    </table>
+
+    <!-- Invoice Info Section -->
+    <table class="hdr-table">
+        <tr>
+            <td class="header-logo"   style="font-weight: bold;">Invoice #:</td>
+            <td  class="header-right">{{ invoice.invoice_no }} </td>
+            <td  class="header-right"  style="font-weight: bold;">Bill To:</td>  
+            <td  class="header-right">{{ invoice.customer_name }} </td> 
+        </tr>
+        <tr>
+            <td    class="header-logo" style="font-weight: bold;">Date:</td>
+            <td  class="btw-crct">{{ invoice.date }}</td> 
+            <td  class="header-right">{{ invoice.mill_unit_invoices.mill.name }}</td> 
+             
+        </tr>
+        <tr>
+            <td   class="header-logo"   style="font-weight: bold;">Customer ID:</td>
+            <td  class="btw-crct">{{ invoice.customer_id }}</td>
+            <td  class="header-right">SITE-{{invoice.site_location}}</td>
+             
+        </tr>
+    </table>
+
+    <div class="highlight">Remittance Amount PKR: {{ invoice.remittance_amount }}</div>
+
+    <!-- SOFTWARE SECTION -->
+    <div class="section-title">Software Section</div>
+    <table class="items">
+        <thead>
+            <tr><th>S.No</th><th>Item</th><th>Pc's</th><th>Description</th><th>Amount</th><th>Payment</th><th>Balance</th></tr>
+        </thead>
+        <tbody>
+            {% for item in invoice.software_invoice_items.all %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ item.item_name }}</td>
+                <td>{{ item.pcs }}</td>
+                <td>{{ item.description|default:"-" }}</td>
+                <td>{{ item.amount }}</td>
+                <td>{{ item.payment }}</td>
+                <td>{{ item.balance }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- HARDWARE SECTION -->
+    <div class="section-title">Hardware Section</div>
+    <table class="items">
+        <thead>
+            <tr><th>S.No</th><th>Item</th><th>Pc's</th><th>Description</th><th>Amount</th><th>Payment</th><th>Balance</th></tr>
+        </thead>
+        <tbody>
+            {% for item in invoice.hardware_invoice_items.all %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ item.item_name }}</td>
+                <td>{{ item.pcs }}</td>
+                <td>{{ item.description|default:"-" }}</td>
+                <td>{{ item.amount }}</td>
+                <td>{{ item.payment }}</td>
+                <td>{{ item.balance }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <table class="items" style="margin-top:10px;">
+        <tr class="total-row">
+            <td colspan="6">Total (Software + Hardware)</td>
+            <td>{{ invoice.remittance_amount }}</td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

@@ -112,7 +112,7 @@
                                     Assign Supervisor
                                   </a>
                                 {% endif %}
-                                  <a href="{% url 'create_invoice' unit.id %}" class="btn btn-success btn-sm">
+                                  <a href="{% url 'create_invoice_bifurcate' unit.id %}" class="btn btn-success btn-sm">
                                       Add Invoice
                                   </a>
                               {% elif request.user|has_group:"Inspectors" %}

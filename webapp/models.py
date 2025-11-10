@@ -186,7 +186,7 @@ class Invoice(models.Model):
     bill_to = models.CharField(max_length=200)
     site_location = models.CharField(max_length=200, blank=True, null=True)
     date = models.DateField(auto_now_add = True,null=True)
-    remittance_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    remittance_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     pdf_file = models.FileField(upload_to='static/invoices/', blank=True, null=True)
     created_by = models.ForeignKey(User,related_name="invoices_created_by", on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -202,6 +202,29 @@ def delete_pdf_file(sender, instance, **kwargs):
 
 class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='invoice_items')
+    serial_no = models.PositiveIntegerField(blank=True, null=True)
+    item_name = models.CharField(max_length=200)
+    pcs = models.PositiveIntegerField(default=1)
+    description = models.TextField(blank=True, null=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+
+class  HardwareInvoiceItems(models.Model):
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='hardware_invoice_items')
+    serial_no = models.PositiveIntegerField(blank=True, null=True)
+    item_name = models.CharField(max_length=200)
+    pcs = models.PositiveIntegerField(default=1)
+    description = models.TextField(blank=True, null=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+
+
+class   SoftwareInvoiceItems(models.Model):
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='software_invoice_items')
     serial_no = models.PositiveIntegerField(blank=True, null=True)
     item_name = models.CharField(max_length=200)
     pcs = models.PositiveIntegerField(default=1)
