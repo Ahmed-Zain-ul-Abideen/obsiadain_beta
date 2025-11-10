@@ -72,6 +72,80 @@ def generate_invoice_html(request, invoice_id):
     # Render HTML template
     return     render(request,'Invoices/invoice_template_v.html', {'invoice': invoice})
 
+
+
+
+def   test_generate_invoice_pdf(invoice_id):
+
+    
+
+    # Fetch invoice
+    invoice = get_object_or_404(Invoice, id=invoice_id)
+
+    # logo_path = os.path.join(settings.BASE_DIR, 'static', 'assets', 'images', 'obsidian_logo.png')
+
+    # Render HTML template
+    html_content = render_to_string('Invoices/invoice_template_vv.html', {'invoice': invoice})
+
+    # Create a BytesIO buffer for PDF output
+    pdf_buffer = BytesIO()
+
+    # Generate PDF using xhtml2pdf
+    pisa_status = pisa.CreatePDF(
+        html_content, dest=pdf_buffer, encoding='utf-8',link_callback=link_callback,
+    )
+
+    if pisa_status.err:
+        return HttpResponse("Error generating PDF", status=500)
+
+    pdf_buffer.seek(0)
+    file_name = f"{invoice.invoice_no}.pdf"
+
+    # Save the generated PDF to your Invoice model 
+
+
+    # -------------------------------------------
+    # ✉️ Send PDF as Email Attachment
+    # -------------------------------------------
+    try:
+        email_to = invoice.mill_unit_invoices.mill.owner.email
+        unit_address = invoice.mill_unit_invoices.address
+
+        context = {
+            "invoice_no": invoice.invoice_no,
+            "remittance_amount": invoice.remittance_amount,
+            "site_location": invoice.site_location,
+            "status": "Generated Invoice",
+            "unit_address": unit_address,
+        }
+
+        # Render your email body HTML
+        html_email_body = render_to_string("Emails/Invoice_generated_email.html", context)
+
+        email_message = EmailMessage(
+            subject=f"Invoice {invoice.invoice_no} Generated",
+            body=html_email_body,
+            from_email=settings.EMAIL_HOST_USER,
+            to=[email_to],
+        )
+
+        email_message.content_subtype = "html"  # So it renders as HTML
+
+        # Attach PDF
+        email_message.attach(file_name, pdf_buffer.getvalue(), "application/pdf")
+
+        # Send the email
+        email_message.send(fail_silently=True)
+
+        print("Genrated  invoice  mail  sending  passed") 
+    except   Exception   as   e:
+        print("Genrated  invoice  mail  sending  failed")
+
+     
+    return  True
+
+
+
 def generate_invoice_pdf(request, invoice_id):
 
     # Permission checks
@@ -140,7 +214,7 @@ def generate_invoice_pdf(request, invoice_id):
         email_message.attach(file_name, pdf_buffer.getvalue(), "application/pdf")
 
         # Send the email
-        email_message.send(fail_silently=False)
+        email_message.send(fail_silently=True)
 
         print("Genrated  invoice  mail  sending  passed") 
     except   Exception   as   e:

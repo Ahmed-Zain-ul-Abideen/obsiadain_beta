@@ -96,7 +96,7 @@ def  analyze_invoice_payment(request, invoice_id=None):
             except   Exception   as   e:
                 print("Failure  inspection   update  email  ",e)
     
-            return   redirect("payment_records")
+            return   redirect("invoices_records")
             # return redirect('inspect_payment', payment_id=payment.id)
 
         return render(request, 'Payments/inspect_payment.html', {

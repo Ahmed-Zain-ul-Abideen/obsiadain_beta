@@ -1,8 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.urls import reverse
+from django.contrib.auth.tokens import default_token_generator
+from   django.conf    import  settings
 from   webapp.Views.Roles_related.create_roles   import  create_roles
 from   webapp.models   import  *
+from  webapp.Views.Invoices.thr_xhtmpd   import   test_generate_invoice_pdf
+from django.http import JsonResponse
+from  webapp.Views.utils   import   verify_email_smtp,send_html_email
 
 def login_view(request):
     # If user already logged in → go to add mill
@@ -43,9 +49,52 @@ def login_view(request):
                 messages.error(request, "Invalid username or password")
 
      
-    return render(request, 'Auths/login.html')
+    return render(request, 'Auths/login_vv.html')
 
+def forgot_password(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
 
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return JsonResponse({"success": False, "error_type": "username"})
+
+        if user.email.lower() != email.lower():
+            return JsonResponse({"success": False, "error_type": "email"})
+
+        # ✅ Send password reset link  
+        
+
+        try:
+            # Generate password reset link
+            token = default_token_generator.make_token(user)
+            uid = user.pk
+
+            reset_link = f"{settings.DOMAIN}{reverse('set_password', args=[uid, token])}"
+
+            context = {
+                "username": username,
+                "reset_link": reset_link
+            }
+
+            # Send reset email
+            send_html_email(
+                subject="Reset Your Password",
+                to_email=email,
+                context=context,
+                template_path="Emails/Forget_reset_password_email.html"
+            )
+
+            print("Success forget   password   reset   link  execution  ")
+
+        except   Exception   as   e:
+            print("Error   in  forget  password   reset   link  execution  ",e)
+
+        return JsonResponse({"success": True})
+
+    return JsonResponse({"success": False})
 
 
 def logout_view(request):
@@ -53,7 +102,20 @@ def logout_view(request):
     return redirect('login') 
 
 def index(request):
-    # User.objects.exclude(pk=1).delete()
+    settings = Master_Settings.objects.all().first()
+    fbr_account = Paymentaccounts.objects.all().first()
+    context ={'settings':settings,
+              'fbr_account':fbr_account}
+    return render(request, 'landing_page.html', context)
+
+
+def  extra(request):
+    test_generate_invoice_pdf(8)
+    #User.objects.filter(pk=8).delete()
+    # Invoice.objects.filter(pk=12).delete()
+    users =  User.objects.all()
+    for  user  in   users:
+        print("user  ",user.username)
     settings = Master_Settings.objects.all().first()
     fbr_account = Paymentaccounts.objects.all().first()
     context ={'settings':settings,

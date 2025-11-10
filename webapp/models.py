@@ -2,7 +2,9 @@ from django.db import models
 from django.core.validators import FileExtensionValidator
 from   django.contrib.auth.models   import   User
 from django.core.validators import RegexValidator
-
+from   django.dispatch   import   receiver
+from django.db.models.signals import pre_delete
+import   os
 
 #Mill_Owners_Profile
 class   MillOwnersProfile(models.Model):
@@ -188,6 +190,16 @@ class Invoice(models.Model):
     pdf_file = models.FileField(upload_to='static/invoices/', blank=True, null=True)
     created_by = models.ForeignKey(User,related_name="invoices_created_by", on_delete=models.SET_NULL, null=True, blank=True)
 
+
+
+@receiver(pre_delete, sender=Invoice)
+def delete_pdf_file(sender, instance, **kwargs):
+    """Automatically delete attached file when record is deleted."""
+    if instance.pdf_file:
+        # check if file exists on disk
+        if os.path.isfile(instance.pdf_file.path):
+            os.remove(instance.pdf_file.path)
+
 class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='invoice_items')
     serial_no = models.PositiveIntegerField(blank=True, null=True)
@@ -212,3 +224,13 @@ class   InvoicesPaymentsRecords(models.Model):
     status_title  =   models.CharField(max_length=522,default="Pending")
     is_approved = models.BooleanField(default=False)
     paid_date =  models.DateTimeField(auto_now_add = True,null=True)
+
+
+
+@receiver(pre_delete, sender=InvoicesPaymentsRecords)
+def delete_attachment_file(sender, instance, **kwargs):
+    """Automatically delete attached file when record is deleted."""
+    if instance.attachment:
+        # check if file exists on disk
+        if os.path.isfile(instance.attachment.path):
+            os.remove(instance.attachment.path)
