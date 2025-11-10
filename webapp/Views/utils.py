@@ -7,6 +7,18 @@ from django.conf import settings
 import smtplib
 import dns.resolver
 
+
+
+from django.utils import timezone
+
+def invalidate_user_tokens(user):
+    """
+    Invalidates all existing tokens for a given user by updating 
+    their last_login timestamp.
+    """
+    user.last_login = timezone.now()
+    user.save(update_fields=['last_login'])
+
 def verify_email_smtp(email):
     domain = email.split('@')[-1]
     try:
