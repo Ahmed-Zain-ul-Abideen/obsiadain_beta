@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User, Group 
 from django.contrib import messages
+from   webapp.Views.utils   import  send_html_email
 from  webapp.models   import   *
 
 def add_inspector(request):
@@ -84,6 +85,10 @@ def add_inspection_report(request, mill_id, unit_id):
     
     if  not  request.user.groups.filter(name="Inspectors").exists():
         return   render(request,'Denied/permission_denied.html')
+    
+
+    mill = Mills.objects.filter(pk=mill_id).first()
+    unit = Mills_Units.objects.filter(id=unit_id).first()
 
     if request.method == "POST":
         # Extract & clean fields
@@ -142,11 +147,53 @@ def add_inspection_report(request, mill_id, unit_id):
             
         )
 
+        if  cameras_online   ==  num_camera_installed:
+            print("all  cameras  online  ,  sending  email now")
+
+            #Installation  report  email
+            try:
+
+                unit_address = unit.address  
+
+                context = {
+                    "num_camera_installed":   num_camera_installed,
+                    "cameras_online": cameras_online,
+                    "Cameras_Offline": cameras_offline,
+                    "CPU_Online": cpu_online,
+                    "CPU_Offline": cpu_offline,
+                    "GPU_Online": gpu_online,
+                    "GPU_Offline": gpu_offline,
+                    "TnT_Software_Online": tnt_software_online,
+                    "TnT_Software_Offline": tnt_software_offline,
+                    "Remarks": remarks,
+                    "unit_address":unit_address,
+
+                }
+
+                email  =   mill.owner.email
+
+                print("mill  owner  email  ",email)
+
+                # Send reset email
+                send_html_email(
+                    subject="Cameras  Installation  Completed   Report  Added   by  Supervisor",
+                    to_email=email,
+                    context=context,
+                    template_path="Emails/Installation_inspection_email.html"
+                )
+
+                print("Success  inspection   update  email  ")
+
+            except   Exception   as   e:
+                print("Failure  inspection   update  email  ",e)
+
+        else:
+            print("all  cameras  not  online  , not  sending  email now")
+
         messages.success(request, "Inspection report submitted successfully!")
  
         return redirect("view_inspection_reports")  # Change this URL if needed
-    mill = Mills.objects.filter(pk=mill_id).first()
-    unit = Mills_Units.objects.filter(id=unit_id).first()
+    
     context = { 
         "mill":mill,
         "unit":unit

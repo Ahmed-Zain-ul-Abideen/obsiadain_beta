@@ -10,7 +10,7 @@ from django.utils.http import urlsafe_base64_encode , urlsafe_base64_decode
 from django.utils.encoding import force_bytes 
 from   django.conf    import  settings
 from  webapp.Views.utils   import   send_html_email
-
+from django.utils import timezone
 
 def generate_customerid():
     """Generate a unique alphanumeric NTN starting with 'MILL-'."""
@@ -98,7 +98,8 @@ def   verify_signup_email(request, uidb64, token):
     if default_token_generator.check_token(user, token):
         print("Signup  verified successfully")
         user.is_active = True
-        user.save()
+        user.last_login = timezone.now()
+        user.save(update_fields=['last_login','is_active'])
         messages.success(request, "Signup  verified successfully")
         return  redirect("/") 
     else:
