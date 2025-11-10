@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+{% load role_tags %}
+{% load static %}
+{% block content %}
+
+
+<div class="row">
+    <div class="col-xl-3 col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-md flex-shrink-0">
+                        <span class="avatar-title bg-subtle-primary text-primary rounded fs-2">
+                            <i class="ri-building-fill"></i>
+                        </span>
+                    </div>
+                    <div class="flex-grow-1 overflow-hidden ms-4">
+                        <p class="text-muted text-truncate font-size-15 mb-2"> Total Mills</p>
+                        <h3 class="fs-4 flex-grow-1 mb-3">{{mills_count}} </h3>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-md flex-shrink-0">
+                        <span class="avatar-title bg-subtle-primary text-primary rounded fs-2">
+                            <i class=" ri-ancient-gate-fill"></i>
+                        </span>
+                    </div>
+                    <div class="flex-grow-1 overflow-hidden ms-4">
+                        <p class="text-muted text-truncate font-size-15 mb-2"> Total Units</p>
+                        <h3 class="fs-4 flex-grow-1 mb-3">{{units_count}} </h3>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-md flex-shrink-0">
+                        <span class="avatar-title bg-subtle-primary text-primary rounded fs-2">
+                            <i class="ri-bank-card-fill"></i>
+                        </span>
+                    </div>
+                    <div class="flex-grow-1 overflow-hidden ms-4">
+                        <p class="text-muted text-truncate font-size-15 mb-2">Total Invoices</p>
+                        <h3 class="fs-4 flex-grow-1 mb-3">{{invoices_count}}</h3>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-md flex-shrink-0">
+                        <span class="avatar-title bg-subtle-primary text-primary rounded fs-2">
+                            <i class=" ri-file-list-3-fill"></i>
+                        </span>
+                    </div>
+                    <div class="flex-grow-1 overflow-hidden ms-4">
+                        <p class="text-muted text-truncate font-size-15 mb-2"> Total Reports</p>
+                        <h3 class="fs-4 flex-grow-1 mb-3">{{reports_count}} </h3>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- END ROW -->
+
+
+<div class="row">
+    <div class="col-xl-8">
+        <div class="card">
+            <div class="card-header border-0 align-items-center d-flex pb-0">
+                <h4 class="card-title mb-0 flex-grow-1">Unit Remittance Overviews</h4>
+            </div>
+            <div class="card-body">
+                
+                <div id="remittance_by_units_chart" class="apex-charts"></div>
+           
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-header border-0 align-items-center d-flex pb-1">
+                <h4 class="card-title mb-0 flex-grow-1">Units Across Mills</h4>
+            
+            </div>
+            <div class="card-body">
+                <div id="units_accross_mills_pie_chart" style="height: 346px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END ROW -->
+
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header border-0 align-items-center d-flex pb-0">
+                <h4 class="card-title mb-0 flex-grow-1">Mills Locations</h4>
+                
+            </div>
+            <div class="card-body pt-2">
+                <div id="map" style="height: 400px;"></div>
+                <!-- end table-responsive -->
+            </div>
+        </div>
+    </div>
+</div>
+    <!-- END ROW -->
+
+
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"/>
+
+<script>
+var map = L.map('map').setView([30.3753, 69.3451], 6); // Pakistan center
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18
+}).addTo(map);
+
+function loadMills(page = 1) {
+    fetch(`/api/mills-data/?page=${page}`)
+    .then(res => res.json())
+    .then(data => {
+        data.mills.forEach(m => {
+            if (!m.lat || !m.lon) return;
+
+            let marker = L.marker([m.lat, m.lon]).addTo(map);
+
+            marker.bindPopup(`
+                <b>${m["mill__name"]}</b><br>
+                Address: ${m.address}<br>
+                NTN: ${m.ntn || 'N/A'}<br>
+                GST: ${m.gst || 'N/A'}<br>
+                Spindles: ${m.spindles_installed || 'N/A'}<br>
+                Rotors: ${m.rotors_installed || 'N/A'}<br>
+                Doubling Machines: ${m.doubling_machines_installed || 'N/A'}<br>
+            `);
+        });
+
+        if (data.has_next) loadMills(page + 1);
+    });
+}
+
+loadMills();
+
+
+//Pie chart 
+
+document.addEventListener("DOMContentLoaded", function() {
+    var options = {
+      series: {{ unit_counts|safe }},
+      chart: {
+        width: '100%',
+        type: 'pie',
+      },
+      labels: {{ mill_names|safe }},
+      legend: {
+        position: 'bottom',  // 👈 moves labels below chart
+        horizontalAlign: 'center',
+        fontSize: '13px',
+        labels: {
+          colors: '#6c757d', // gray text
+        },
+      },
+      responsive: [{
+        breakpoint: 480,
+        options: {
+          chart: {
+            width: 250
+          },
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }]
+    };
+
+    var chart = new ApexCharts(
+      document.querySelector("#units_accross_mills_pie_chart"),
+      options
+    );
+    chart.render();
+  });
+
+
+
+
+  document.addEventListener("DOMContentLoaded", function() {
+  var options = {
+    series: [{
+      name: 'Remittance',
+      data: {{ total_remittances|safe }}
+    }],
+    chart: { type: 'bar', height: 350 },
+    plotOptions: {
+      bar: { borderRadius: 6, columnWidth: '55%', distributed: true }
+    },
+    dataLabels: {
+      enabled: true,
+      formatter: val => "$" + val.toFixed(2),
+      offsetY: -10,
+      style: { fontSize: '12px', colors: ["#304758"] }
+    },
+    xaxis: {
+      categories: {{ unit_names|safe }},
+      labels: { style: { fontSize: '12px' } }
+    },
+    yaxis: { title: { text: 'Total Remittance ($)' } },
+    title: { text: 'Remittance by Units', align: 'center' },
+    tooltip: {
+      y: { formatter: val => "$" + val.toFixed(2) }
+    }
+  };
+
+  var chart = new ApexCharts(document.querySelector("#remittance_by_units_chart"), options);
+  chart.render();
+});
+  
+</script>
+
+{% endblock %}

@@ -172,3 +172,61 @@ def  view_users_login_logout_activities_log(request):
         context ={'users_login_logout_activities_log':users_login_logout_activities_log}
 
         return  render(request, 'Others/user_activity_log.html', context)
+    
+from django.db.models import Sum
+import json
+def dashboard(request):
+    # Fetch basic settings and account info
+    settings = Master_Settings.objects.first()
+    fbr_account = Paymentaccounts.objects.first()
+
+    # Dashboard counts
+    mills_count = Mills.objects.count()
+    unit_count = Mills_Units.objects.count()
+    invoices_count = Invoice.objects.count()
+    reports_count = Inspection_Reports.objects.count()
+
+    # --- Units across Mills chart data ---
+    # Each mill with total units count (either from `units` field or actual related units)
+    mills = Mills.objects.all()
+    mill_names = []
+    unit_counts = []
+
+    for mill in mills:
+        # Use the `units` field if you want manually stored count:
+        # count = mill.units
+
+        # OR dynamically count related units (recommended for accuracy):
+        count = mill.mills_units.count()
+
+        mill_names.append(mill.name)
+        unit_counts.append(count)
+
+
+    # Aggregate total remittance amount per mill unit
+    remittance_data = (
+        Invoice.objects
+        .values('mill_unit_invoices__id')  # Or __id / __unit_id / __name depending on what you want to display
+        .annotate(total_remittance=Sum('remittance_amount'))
+        .order_by('mill_unit_invoices__id')
+    )
+
+    # Extract labels and values
+    unit_names = [item['mill_unit_invoices__id'] for item in remittance_data]
+    total_remittances = [float(item['total_remittance'] or 0) for item in remittance_data]
+
+    context = {
+        'settings': settings,
+        'fbr_account': fbr_account,
+        'mills_count': mills_count,
+        'units_count': unit_count,
+        'invoices_count': invoices_count,
+        'reports_count': reports_count,
+        'mill_names': mill_names,      # for chart X-axis
+        'unit_counts': unit_counts,    # for chart Y-values
+        'unit_names': json.dumps(unit_names),
+        'total_remittances': json.dumps(total_remittances),
+
+    }
+
+    return render(request, 'Auths/dashboard_index.html', context)

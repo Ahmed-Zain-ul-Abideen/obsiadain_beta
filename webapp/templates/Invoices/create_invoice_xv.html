@@ -4,7 +4,7 @@
 <div class="container mt-5">
     <div class="card shadow-lg border-0 rounded-4">
         <div class="card-header bg-primary text-white text-center py-3 rounded-top-4">
-            <h3 class="mb-0">🧾 Create Invoice</h3>
+            <h3 class="mb-0">Create Invoice</h3>
         </div>
         <div class="card-body bg-light">
             <form method="POST" class="p-3">
@@ -18,13 +18,15 @@
                             </label>
                              
                             {%  if  field.name == 'invoice_no' %}
-                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}"  value="{{invoice_id}}"   readonly>
+                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}"  value="{{invoice_id}}"  class="form-control"  readonly>
                             {% elif  field.name == 'bill_to' %}
-                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}"  value="{{unit.mill.owner.username}}"   readonly>
+                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}"  value="{{unit.mill.owner.username}}"   class="form-control" readonly>
                             {% elif  field.name == 'customer_name' %}
-                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}"  value="{{unit.mill.owner.username}}"   readonly>
+                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}"  value="{{unit.mill.owner.username}}"   class="form-control" readonly>
                             {% elif  field.name == 'customer_id' %}
-                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}"  value="{{unit.mill.owner.mills_owners_profiles.first.customer_id}}"   readonly>
+                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}"  value="{{unit.mill.owner.mills_owners_profiles.first.customer_id}}"  class="form-control"  readonly>
+                            {% elif  field.name == 'Remittance Amount' %}
+                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}"  value="{{unit.mill.owner.mills_owners_profiles.first.customer_id}}"  class="form-control"  readonly>
                             {% else %}
                                 {{ field }}
                             {% endif %}
@@ -75,7 +77,7 @@
 
                 <div class="d-flex justify-content-between mt-4">
                     <button type="button" class="btn btn-outline-primary" id="add-row">➕ Add Item</button>
-                    <button type="submit" class="btn btn-success">💾 Save Invoice</button>
+                    <button type="submit" class="btn btn-success">Save Invoice</button>
                 </div>
             </form>
         </div>
@@ -124,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const row = e.target.closest("tr");
 
             if (allRows.length <= 1) {
-                alert("⚠️ At least one invoice item is required.");
+                alert("At least one invoice item is required.");
                 return;
             }
 
