@@ -4,7 +4,6 @@ from django.contrib import messages
 from django.urls import reverse
 from django.contrib.auth.tokens import default_token_generator
 from   django.conf    import  settings
-from   webapp.Views.Roles_related.create_roles   import  create_roles
 from   webapp.models   import  *
 from  webapp.Views.Invoices.thr_xhtmpd   import   test_generate_invoice_pdf
 from django.http import JsonResponse
@@ -37,16 +36,49 @@ def login_view(request):
             messages.warning(request, msg)
             #return redirect(request.META.get('HTTP_REFERER'))
         else: 
-            user = authenticate(request, username=username, password=password)
 
-            if user is not None:
-                login(request, user)
-                if    request.user.is_superuser:
-                    return redirect('view_fbr_oficials')
-                else: 
-                    return redirect('view_mills')
+
+            try:
+                user_obj = User.objects.get(username=username)
+            except User.DoesNotExist:
+                user_obj = None
+
+            # Step 1: Check if username exists
+            if user_obj is None:
+                messages.error(request, "Invalid username or password.")
+                # return redirect("login")  
+            elif not user_obj.is_active:
+                messages.error(request, "Your account is not activated. Please verify your signup email first.")
+                # return redirect("login")
             else:
-                messages.error(request, "Invalid username or password")
+
+                # Step 3: Now authenticate since user is active
+                user = authenticate(request, username=username, password=password)
+
+                if user is not None:
+                    login(request, user)
+                    if user.is_superuser:
+                        return redirect('view_fbr_oficials')
+                    else:
+                        return redirect('view_mills')
+                else:
+                    messages.error(request, "Invalid password.")
+
+
+            # user = authenticate(request, username=username, password=password)
+            # print("user  nnot  none ",user)
+
+            # if user is not None:
+            #     # if   not   user.is_active:
+            #     #     messages.error(request, "Verify  Signup  email  first!")
+            #     # else:
+            #     login(request, user)
+            #     if    request.user.is_superuser:
+            #         return redirect('view_fbr_oficials')
+            #     else: 
+            #         return redirect('view_mills')
+            # else:
+            #     messages.error(request, "Invalid username or password  or  Verify  Signup  first!")
 
      
     return render(request, 'Auths/login_vv.html')
@@ -110,12 +142,12 @@ def index(request):
 
 
 def  extra(request):
-    test_generate_invoice_pdf(8)
-    #User.objects.filter(pk=8).delete()
+    #test_generate_invoice_pdf(8)
+    User.objects.filter(pk=10).delete()
     # Invoice.objects.filter(pk=12).delete()
-    users =  User.objects.all()
-    for  user  in   users:
-        print("user  ",user.username)
+    #users =  User.objects.all()
+    # for  user  in   users:
+    #     print("user  ",user.username)
     settings = Master_Settings.objects.all().first()
     fbr_account = Paymentaccounts.objects.all().first()
     context ={'settings':settings,

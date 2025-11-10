@@ -1,7 +1,7 @@
 # urls.py
 from django.urls import path
 from   webapp.Views.Mills_related.register_mill  import    *
-from   webapp.Views.Users_signup_nd_login.user_signup   import   register_user
+from   webapp.Views.Users_signup_nd_login.user_signup   import   register_user, register_user_verify_signup , verify_signup_email
 from  webapp.Views.Users_signup_nd_login.user_login   import   login_view,extra, forgot_password, logout_view, index , view_users_login_logout_activities_log
 from   webapp.Views.Maps.all_maps   import  *
 from   webapp.Views.master_adm.master_control    import  *
@@ -18,9 +18,12 @@ urlpatterns = [
     path('', index, name='index'),  # root = index (landing page)
     #Auths
     path('login/', login_view, name='login'),  # root = login
-    path('register/', register_user, name='register'),
+    path('register/', register_user_verify_signup, name='register'),
     path('logout/', logout_view, name='logout'),
     path('forgot-password/', forgot_password, name='forgot_password'),
+    path("verify-signup-mail/<str:uidb64>/<str:token>/", verify_signup_email, name="verify_signup_mail"),
+
+
 
     #Mills
     path('add-mill-by-owner/', register_mill_by_owner, name='add_mill_by_owner'),
