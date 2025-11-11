@@ -1,111 +1,207 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Cameras  Installation  Completed    Report  Update</title>
+  <meta charset="UTF-8">
+  <title>Cameras Installation Completed Report Update</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: #f4f6f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    .email-container {
+      max-width: 640px;
+      margin: 40px auto;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #007bff, #6610f2);
+      color: #ffffff;
+      text-align: center;
+      padding: 30px 20px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .subtext {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 30px 25px;
+      color: #333333;
+    }
+
+    .content p {
+      font-size: 16px;
+      margin: 10px 0;
+      color: #34495e;
+    }
+
+    .card {
+      border: 1px solid #e2e6ea;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      font-size: 16px;
+      padding: 10px 15px;
+      color: #495057;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .card-body {
+      padding: 12px 18px;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #fff;
+      margin-left: 8px;
+    }
+
+    .badge-success {
+      background-color: #28a745;
+    }
+
+    .badge-danger {
+      background-color: #dc3545;
+    }
+
+    .badge-info {
+      background-color: #007bff;
+    }
+
+    .badge-warning {
+      background-color: #ffc107;
+      color: #212529;
+    }
+
+    .footer {
+      background-color: #f1f3f5;
+      text-align: center;
+      color: #6c757d;
+      font-size: 13px;
+      padding: 15px;
+      border-top: 1px solid #e2e6ea;
+    }
+
+    .footer a {
+      color: #007bff;
+      text-decoration: none;
+    }
+  </style>
 </head>
-<body style="font-family: Arial, sans-serif; background-color:#f5f6fa; margin:0; padding:0;">
+<body>
 
-    <table width="100%" cellspacing="0" cellpadding="0">
-        <tr>
-            <td align="center" style="padding:30px 0;">
-                
-                <!-- Card -->
-                <table width="600" cellspacing="0" cellpadding="0" 
-                       style="background:#ffffff; border-radius:10px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+  <div class="email-container">
+    <!-- Header -->
+    <div class="header">
+      <h1>Cameras Installation Completed</h1>
+      <p class="subtext">Unit Report Update Notification</p>
+    </div>
 
-                    <tr>
-                        <td align="center" style="padding-bottom:20px;">
-                            <h2 style="color:#2c3e50; margin:0; font-size:26px;">Cameras  Installation  Completed    Report  Update</h2>
-                            <p style="color:#7f8c8d; font-size:14px;">Your unit's  cameras   installation  report  has been updated.</p>
-                        </td>
-                    </tr>
+    <!-- Content -->
+    <div class="content">
+      <p><strong>🏢 Unit Address:</strong> {{ unit_address }}</p>
 
-                    <tr>
-                        <td style="padding: 10px 20px;">
-                            <p style="font-size:16px; color:#34495e;">
-                                <strong>Unit Address:</strong> {{ unit_address }}
-                            </p>
-                        </td>
-                    </tr> 
-                
-                    
-                    <tr>
-                        <td style="padding: 15px 20px;">
-                            <table width="100%" cellpadding="10" style="border-collapse: collapse;">
-                                <tr>
-                                    <td style="background:#ecf0f1; border-radius:6px; font-size:15px;">
-                                        <strong>Total  Cameras: </strong>  {{ num_camera_installed }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="background:#d1f7d6; border-radius:6px; font-size:15px;">
-                                        <strong>Cameras  Online:</strong>  {{ cameras_online }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="background:#ffe6e6; border-radius:6px; font-size:15px;">
-                                        <strong>Cameras  Offline:</strong>  {{ Cameras_Offline }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="background:#f8f9d2; border-radius:6px; font-size:15px;">
-                                        <strong>CPU  Online:</strong> {{ CPU_Online }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="background:#f8f9d2; border-radius:6px; font-size:15px;">
-                                        <strong>CPU  Offline:</strong> {{ CPU_Offline }}
-                                    </td>
-                                </tr>
+      <!-- Cameras Summary -->
+      <div class="card">
+        <div class="card-header">📸 Cameras Summary</div>
+        <div class="card-body">
+          <p><strong>Total Cameras:</strong> 
+            <span class="badge badge-info">{{ num_camera_installed }}</span>
+          </p>
+          <p><strong>Cameras Online:</strong> 
+            <span class="badge badge-success">{{ cameras_online }}</span>
+          </p>
+          <p><strong>Cameras Offline:</strong> 
+            <span class="badge badge-danger">{{ Cameras_Offline }}</span>
+          </p>
+        </div>
+      </div>
 
+      <!-- CPU Summary -->
+      <div class="card">
+        <div class="card-header">🖥️ CPU Status</div>
+        <div class="card-body">
+          <p><strong>CPU Online:</strong> 
+            <span class="badge badge-success">{{ CPU_Online }}</span>
+          </p>
+          <p><strong>CPU Offline:</strong> 
+            <span class="badge badge-danger">{{ CPU_Offline }}</span>
+          </p>
+        </div>
+      </div>
 
-                                <tr>
-                                    <td style="background:#f8f9d2; border-radius:6px; font-size:15px;">
-                                        <strong>GPU  Online:</strong> {{ GPU_Online }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="background:#f8f9d2; border-radius:6px; font-size:15px;">
-                                        <strong>GPU  Offline:</strong> {{ GPU_Offline }}
-                                    </td>
-                                </tr>
+      <!-- GPU Summary -->
+      <div class="card">
+        <div class="card-header">🎮 GPU Status</div>
+        <div class="card-body">
+          <p><strong>GPU Online:</strong> 
+            <span class="badge badge-success">{{ GPU_Online }}</span>
+          </p>
+          <p><strong>GPU Offline:</strong> 
+            <span class="badge badge-danger">{{ GPU_Offline }}</span>
+          </p>
+        </div>
+      </div>
 
+      <!-- TnT Software Summary -->
+      <div class="card">
+        <div class="card-header">💻 TnT Software Status</div>
+        <div class="card-body">
+          <p><strong>Software Online:</strong> 
+            <span class="badge badge-success">{{ TnT_Software_Online }}</span>
+          </p>
+          <p><strong>Software Offline:</strong> 
+            <span class="badge badge-danger">{{ TnT_Software_Offline }}</span>
+          </p>
+        </div>
+      </div>
 
-                                <tr>
-                                    <td style="background:#f8f9d2; border-radius:6px; font-size:15px;">
-                                        <strong>TnT Software  Online:</strong> {{ TnT_Software_Online }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="background:#f8f9d2; border-radius:6px; font-size:15px;">
-                                        <strong>TnT Software  Offline:</strong> {{ TnT_Software_Offline }}
-                                    </td>
-                                </tr>
+      <!-- Remarks -->
+      <div class="card">
+        <div class="card-header">📝 Remarks</div>
+        <div class="card-body">
+          <p style="background-color: #fff3cd; border-radius: 8px; padding: 10px;">
+            {{ Remarks }}
+          </p>
+        </div>
+      </div>
 
-                                <tr>
-                                    <td style="background:#f8f9d2; border-radius:6px; font-size:15px;">
-                                        <strong>Remarks:</strong>
-                                         {{ Remarks }}
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    
-                     
-                    
-                    <tr>
-                        <td align="center" style="padding-top:20px; font-size:13px; color:#7f8c8d;">
-                            This is an automated notification. If you have questions, contact support.
-                        </td>
-                    </tr>
+    </div>
 
-                </table>
-            
-            </td>
-        </tr>
-    </table>
+    <!-- Footer -->
+    <div class="footer">
+      <p>This is an automated notification. If you have any questions, please contact through chat app.</p>
+      <p>© {{ current_year }} Crafted with ❤️ by 
+        <a href="https://obsidian.com.pk" target="_blank" rel="noopener noreferrer">Obsidian</a>
+      </p>
+    </div>
+  </div>
 
 </body>
 </html>

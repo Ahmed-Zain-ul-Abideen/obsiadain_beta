@@ -138,8 +138,8 @@ def  create_invoice_bufricate(request,unit_id):
         hardware_formset = HardwareFormSet()
 
     
-    print("software_formset.management_form  ",software_formset.management_form)
-    print("hardware_formset.management_form  ",hardware_formset.management_form)
+    # print("software_formset.management_form  ",software_formset.management_form)
+    # print("hardware_formset.management_form  ",hardware_formset.management_form)
 
     return render(request, 'Invoices/Bifurcate/create_invoice.html', {'form': form,"hardware_formset":hardware_formset, 'software_formset': software_formset,"unit":unit,"invoice_id":invoice_id})
 
