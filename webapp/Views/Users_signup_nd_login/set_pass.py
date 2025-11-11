@@ -1,6 +1,7 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
 from django.contrib import messages
+#from  webapp.Views.utils   import  invalidate_user_tokens
 from django.shortcuts import render, redirect
 
 def set_password_view(request, uid, token):
@@ -16,6 +17,9 @@ def set_password_view(request, uid, token):
         print("user toke not  exist")
         messages.error(request, "The reset link is invalid or expired.")
         return redirect("/")
+    else:
+        print("link  is  valid")
+        # invalidate_user_tokens(user)
 
     if request.method == "POST":
         password = request.POST.get("password", "").strip()

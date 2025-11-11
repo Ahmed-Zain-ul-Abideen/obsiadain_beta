@@ -81,26 +81,31 @@
 
      /* Remittance Section */
     .remittance {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
         margin-top: 30px;
-        border: 1px solid #888;
-        padding: 15px;
+        border: 1px solid #777;
+       
     }
-    .remittance h4 {
+     .remitance_heading {
         background-color: #f2f2f2;
-        margin: -15px -15px 10px -15px;
-        padding: 8px;
+        border: 1px solid #777;
+        padding: 8px;        
         font-size: 13px;
         font-weight: bold;
+        width: 97%;
+        
     }
-    .remittance table {
+    .remittance table { 
         width: 100%;
-        border-collapse: collapse;
     }
     .remittance th, .remittance td {
-        border: none;
+        border: 1px solid #777;
         text-align: left;
-        padding: 4px 0;
-    }
+        padding: 4px;
+    } 
 </style>
 </head>
 <body>
@@ -145,7 +150,7 @@
     <div class="highlight">Remittance Amount PKR: {{ invoice.remittance_amount }}</div>
 
     <!-- SOFTWARE SECTION -->
-    <div class="section-title">Software Section</div>
+    <div class="section-title">Software Invoice</div>
     <table class="items">
         <thead>
             <tr><th>S.No</th><th>Item</th><th>Pc's</th><th>Description</th><th>Amount</th><th>Payment</th><th>Balance</th></tr>
@@ -166,7 +171,7 @@
     </table>
 
     <!-- HARDWARE SECTION -->
-    <div class="section-title">Hardware Section</div>
+    <div class="section-title">Hardware Invoice</div>
     <table class="items">
         <thead>
             <tr><th>S.No</th><th>Item</th><th>Pc's</th><th>Description</th><th>Amount</th><th>Payment</th><th>Balance</th></tr>
@@ -188,14 +193,14 @@
 
     <table class="items" style="margin-top:10px;">
         <tr class="total-row">
-            <td colspan="6">Total (Software + Hardware)</td>
+            <td colspan="6">Total Invoice (Software + Hardware)</td>
             <td>{{ invoice.remittance_amount }}</td>
         </tr>
     </table>
 
     <!-- Remittance Section -->
     <div class="remittance">
-        <h4>REMITTANCE</h4>
+        <span class="remitance_heading">REMITTANCE</span>
         <table>
             <tr><th>Customer Name:</th><td>{{ invoice.customer_name }}</td></tr>
             <tr><th>Customer ID:</th><td>{{ invoice.customer_id }}</td></tr>
