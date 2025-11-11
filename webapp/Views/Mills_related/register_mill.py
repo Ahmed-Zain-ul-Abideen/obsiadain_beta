@@ -193,6 +193,11 @@ def   register_mill_by_fbr_official(request):
             # else:
             #     pass
 
+
+            if   User.objects.filter(username=username).exists():
+                messages.warning(request,  "This  username  is  already  taken !")
+                return redirect(request.META.get('HTTP_REFERER'))
+
             user = User.objects.create_user(username=username, email=email)
             user.set_unusable_password() 
 
