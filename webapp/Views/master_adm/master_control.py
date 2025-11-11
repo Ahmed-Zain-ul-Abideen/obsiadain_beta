@@ -80,7 +80,7 @@ def   add_fbr_oficials(request):
 
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username already exists")
-            return redirect("add_fbr_oficials")
+            return   redirect(request.META.get('HTTP_REFERER'))
 
         # Create user
         user = User.objects.create_user(

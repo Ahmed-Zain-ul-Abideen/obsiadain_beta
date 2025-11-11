@@ -19,8 +19,8 @@ def add_inspector(request):
         password = request.POST.get("password1", "").strip()
 
         if User.objects.filter(username=username).exists():
-            messages.error(request, "Username already exists")
-            return redirect("add_inspector")
+            messages.warning(request, "Username already exists")
+            return   redirect(request.META.get('HTTP_REFERER'))
 
         # Create user
         user = User.objects.create_user(
@@ -189,7 +189,20 @@ def add_inspection_report(request, mill_id, unit_id):
                     template_path="Emails/Installation_inspection_email.html"
                 )
 
-                print("Success  inspection   update  email  ")
+                print("Success  inspection   update  email  to  mail  owner  ,  now  optionally  send  to super-admin  ")
+
+                #optionally  send  same  mail  to  superadmin
+                superad =  User.objects.filter(is_superuser=True).first()
+                print("superad  email  ",superad.email ,"   superad   username  ", superad.username)
+                send_html_email(
+                    subject="Cameras  Installation  Completed   Report  Added   by  Supervisor",
+                    to_email=superad.email,
+                    context=context,
+                    template_path="Emails/Installation_inspection_email.html"
+                )
+
+                print("Success  inspection   update  email  to  super-admin   ") 
+
 
             except   Exception   as   e:
                 print("Failure  inspection   update  email  ",e)
