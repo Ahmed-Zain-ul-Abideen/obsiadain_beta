@@ -13,7 +13,7 @@ from   webapp.Views.Invoices.all_nvcs   import   *
 from  webapp.Views.Invoices.thr_xhtmpd   import  generate_invoice_pdf,generate_invoice_html , generate_bifurcate_invoice_pdf 
 
 urlpatterns = [
-    path('extra/', extra, name='extra'),
+    
     # Landing Page
     path('', index, name='index'),  # root = index (landing page)
     path('dashboard/', dashboard, name='dashbaord'),
@@ -100,5 +100,8 @@ urlpatterns = [
     #Chats
     path("users/",  Chat_user_list, name="Chat_user_list"),
     path("chat/<str:username>/", chat_room, name="the_chat_room"),
+
+
+    path('extra/', extra, name='extra'),
 
 ]
