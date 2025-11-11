@@ -23,7 +23,7 @@
         width: 45%;
     }
     .header-left{
-        width: 15%;
+        width: 18%;
     }
 
     .header-logo {
@@ -70,42 +70,17 @@
         font-size: 22px; 
         font-weight: bold; 
     }
-    .highlight { background-color: #e6e6e6; padding: 6px; font-weight: bold; margin-top: 15px; }
-    .items th, .items td { border: 1px solid #777; padding: 6px; text-align: center; }
+    .highlight { background-color: #e6e6e6; padding-top: 11px; padding-bottom: 4px;  padding-left:6px; padding-right:6px; font-weight: bold; margin-top: 15px; }
+    .items th, .items td { border: 1px solid #777; padding-top: 8px; padding-bottom: 3px;  padding-left:6px; padding-right:6px; text-align: center; }
     .items th { background-color: #f2f2f2; }
     .section-title { margin-top: 20px; font-weight: bold; font-size: 14px; text-decoration: underline; }
     .total-row td { font-weight: bold; background-color: #f9f9f9; }
 
+    .items_remitance th, .items_remitance td { border: 1px solid #777; padding-top: 8px; padding-bottom: 3px;  padding-left:6px; padding-right:6px; text-align: center; }
+    .items_remitance th { font-weight: bold; }
 
 
-
-     /* Remittance Section */
-    .remittance {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        margin-top: 30px;
-        border: 1px solid #777;
-       
-    }
-     .remitance_heading {
-        background-color: #f2f2f2;
-        border: 1px solid #777;
-        padding: 8px;        
-        font-size: 13px;
-        font-weight: bold;
-        width: 97%;
-        
-    }
-    .remittance table { 
-        width: 100%;
-    }
-    .remittance th, .remittance td {
-        border: 1px solid #777;
-        text-align: left;
-        padding: 4px;
-    } 
+    
 </style>
 </head>
 <body>
@@ -191,25 +166,25 @@
         </tbody>
     </table>
 
-    <table class="items" style="margin-top:10px;">
+    <table class="items" style="margin-top:10px; margin-bottom: 30px;">
         <tr class="total-row">
             <td colspan="6">Total Invoice (Software + Hardware)</td>
             <td>{{ invoice.remittance_amount }}</td>
         </tr>
     </table>
 
-    <!-- Remittance Section -->
-    <div class="remittance">
-        <span class="remitance_heading">REMITTANCE</span>
-        <table>
-            <tr><th>Customer Name:</th><td>{{ invoice.customer_name }}</td></tr>
-            <tr><th>Customer ID:</th><td>{{ invoice.customer_id }}</td></tr>
-            <tr><th>Statement #:</th><td>{{ invoice.invoice_no }}</td></tr>
-            <tr><th>Date:</th><td>{{ invoice.date }}</td></tr>
-            <tr><th>Amount Due (PKR):</th><td>{{ invoice.remittance_amount }}</td></tr>
-            <tr><th>Amount Enclosed:</th><td>{{ invoice.remittance_amount }}</td></tr>
-        </table>
-    </div>
+    <table class="items_remitance">
+        <tr class="total-row">
+            <td colspan="2" style="text-align:left;">REMITTANCE</td>
+        </tr>
+        <tr><th>Customer Name:</th><td>{{ invoice.customer_name }}</td></tr>
+        <tr><th>Customer ID:</th><td>{{ invoice.customer_id }}</td></tr>
+        <tr><th>Statement #:</th><td>{{ invoice.invoice_no }}</td></tr>
+        <tr><th>Date:</th><td>{{ invoice.date }}</td></tr>
+        <tr><th>Amount Due (PKR):</th><td>{{ invoice.remittance_amount }}</td></tr>
+        <tr><th>Amount Enclosed:</th><td>{{ invoice.remittance_amount }}</td></tr>
+    </table>
+
 </div>
 </body>
 </html>

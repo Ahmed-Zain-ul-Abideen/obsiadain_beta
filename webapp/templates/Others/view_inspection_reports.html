@@ -99,11 +99,15 @@
                                     <td>{{ r.tnt_software_online }}</td>
                                     <td>{{ r.tnt_software_offline }}</td>
                                     <td>
-                                        {%  if   r.remarks  %}
-                                          {{r.remarks}}
-                                        {% else %}
-                                           --
-                                        {%  endif %}
+                                        <button 
+                                            type="button" 
+                                            class="btn btn-warning btn-sm"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#remarksModal"
+                                            data-remarks="{{ r.remarks|default:'--' }}"
+                                            data-unitid="{{ r.mill_unit.id }}">  <!-- or whatever your field name is -->
+                                            View Remarks
+                                        </button>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -125,4 +129,40 @@
     </div>
 </div>
 
+
+<!-- Remarks Modal -->
+<div class="modal fade" id="remarksModal" tabindex="-1" aria-labelledby="remarksModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="remarksModalLabel">Remarks of Unit ID: <span id="modalUnitId"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="remarksText">
+        <!-- Remark will appear here -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const remarksModal = document.getElementById('remarksModal');
+
+  remarksModal.addEventListener('show.bs.modal', function(event) {
+    const button = event.relatedTarget; // Button that triggered the modal
+    const remarks = button.getAttribute('data-remarks') || '--';
+    const unitId = button.getAttribute('data-unitid') || 'N/A';
+
+    // Fill modal content
+    const remarksText = remarksModal.querySelector('#remarksText');
+    const modalUnitId = remarksModal.querySelector('#modalUnitId');
+
+    remarksText.textContent = remarks;
+    modalUnitId.textContent = unitId;
+  });
+});
+</script>
 {% endblock %}
