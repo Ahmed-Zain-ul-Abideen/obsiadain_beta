@@ -138,6 +138,11 @@ def   register_user_verify_signup(request):
                 msg = ", ".join(missing_fields) + " " + ("is missing" if len(missing_fields)==1 else "are missing")
                 messages.warning(request, msg)
                 return redirect(request.META.get('HTTP_REFERER'))
+            
+
+            if   User.objects.filter(username=username).exists():
+                messages.warning(request,  "This  username  is  already  taken !")
+                return redirect(request.META.get('HTTP_REFERER'))
 
             
 
@@ -159,9 +164,12 @@ def   register_user_verify_signup(request):
 
                 reset_link = f"{settings.DOMAIN}{reverse('verify_signup_mail', args=[uid, token])}"
 
+                current_year  = str(timezone.now().year)
+
                 context = {
                     "username": username,
-                    "reset_link": reset_link
+                    "reset_link": reset_link,
+                    "current_year":current_year
                 }
 
                 # Send reset email

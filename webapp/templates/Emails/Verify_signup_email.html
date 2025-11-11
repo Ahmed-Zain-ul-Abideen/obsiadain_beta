@@ -1,18 +1,107 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Verify  Signup  Email</title>
+<style>
+  body {
+    background-color: #f4f6f8;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  .email-container {
+    max-width: 600px;
+    margin: 40px auto;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+  }
+
+  .email-header {
+    background: linear-gradient(135deg,#0c768a,  #0c768a);
+    color: white;
+    text-align: center;
+    padding: 24px 20px;
+  }
+
+  .email-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .email-body {
+    padding: 30px 35px;
+    color: #333;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .email-body h3 {
+    color: #007bff;
+    margin-bottom: 15px;
+  }
+
+  .reset-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    margin: 25px 0;
+    background: #0c768a;
+    color: #ffffff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.3s;
+  }
+
+  .reset-btn:hover {
+    background: #0056b3;
+  }
+
+  .email-footer {
+    text-align: center;
+    font-size: 13px;
+    color: #888;
+    padding: 20px;
+    border-top: 1px solid #eee;
+    background-color: #fafafa;
+  }
+
+  .brand-name {
+    color: #007bff;
+    font-weight: 600;
+  }
+</style>
+</head>
 <body>
-<h3>Hello {{ username }},</h3>
+    <div class="email-container">
+        <div class="email-header">
+        <h2>Verify  Signup</h2>
+        </div>
 
-<p>Click the below link to  verify  your  signup:</p>
+        <div class="email-body">
+        <h3>Hello {{ username }},</h3>
+        <p>We received a  new  user  sign  up  against   your  email. You can  verify  the  sign  up  by  clicking the button below:</p>
 
-<a href="{{ reset_link }}" target="_blank" style="padding:10px; background:#007bff; color:white; text-decoration:none;">
-Verify  Signup
-</a>
+        <a href="{{ reset_link }}" target="_blank" class="reset-btn"   style="color: #ffffff;">Verify   Signup</a>
 
-<p>If  you   didn't   Signed  up, ignore it.</p>
+        <p>If you did not  have  signed  up, you can safely ignore this email.</p>
 
-<br>
-Regards,<br>
-Obsidian
+        <p>Stay secure,<br>
+        <strong class="brand-name">Obsidian</strong> Team</p>
+        </div>
+
+        
+        <div class="email-footer">
+        <p>This is an automated notification. If you have any questions, please contact through chat app.</p>
+        <p>© {{ current_year }} Crafted with ❤️ by 
+            <a href="https://obsidian.com.pk" target="_blank" rel="noopener noreferrer">Obsidian</a>
+        </p>
+        </div>
+    </div>
 </body>
 </html>

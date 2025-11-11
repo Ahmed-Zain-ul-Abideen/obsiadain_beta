@@ -157,6 +157,13 @@
     </div>
 </div>
 
+
+{% if request.GET.pdf %}
+  <script>
+    window.open("{{ request.GET.pdf }}", "_blank"); // open in new tab
+  </script>
+{% endif %}
+
 <!-- 🧠 JS Logic -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {

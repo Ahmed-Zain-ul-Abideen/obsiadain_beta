@@ -1,84 +1,133 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Payment  Inspection Update</title>
+  <meta charset="UTF-8">
+  <title>Invoice Payment Status Update</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(180deg, #f0f3f7, #ffffff);
+      margin: 0;
+      padding: 0;
+      color: #34495e;
+    }
+    .container {
+      max-width: 640px;
+      margin: 40px auto;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #0c768a, #0c768a);
+      color: white;
+      text-align: center;
+      padding: 30px 20px;
+    }
+    .header h2 {
+      margin: 0;
+      font-size: 26px;
+      font-weight: 600;
+    }
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-top: 6px;
+    }
+    .content {
+      padding: 25px 30px;
+    }
+    .info {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 10px;
+      border: 1px solid #e1e5ea;
+    }
+    .info-row {
+      padding: 10px 0;
+      border-bottom: 1px solid #ececec;
+    }
+    .info-row:last-child {
+      border-bottom: none;
+    }
+    .info-row strong {
+      color: #2c3e50;
+    }
+    .highlight {
+      background: #e9f7ef;
+      border-left: 4px solid #28a745;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      font-weight: 500;
+    }
+    .status {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .status.success {
+      background: #28a745;
+    }
+    .status.pending {
+      background: #ffc107;
+      color: #343a40;
+    }
+    .status.failed {
+      background: #dc3545;
+    }
+    .footer {
+      background: #f1f3f6;
+      text-align: center;
+      padding: 15px;
+      font-size: 13px;
+      color: #7f8c8d;
+      border-top: 1px solid #e1e5ea;
+    }
+  </style>
 </head>
-<body style="font-family: Arial, sans-serif; background-color:#f5f6fa; margin:0; padding:0;">
+<body>
 
-    <table width="100%" cellspacing="0" cellpadding="0">
-        <tr>
-            <td align="center" style="padding:30px 0;">
-                
-                <!-- Card -->
-                <table width="600" cellspacing="0" cellpadding="0" 
-                       style="background:#ffffff; border-radius:10px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+  <div class="container">
+    <div class="header">
+      <h2>📄 Invoice Payment Status Update</h2>
+      <p>Your unit's invoice payment record has been updated.</p>
+    </div>
 
-                    <tr>
-                        <td align="center" style="padding-bottom:20px;">
-                            <h2 style="color:#2c3e50; margin:0; font-size:26px;">Invoice  Payment Status Update</h2>
-                            <p style="color:#7f8c8d; font-size:14px;">Your unit's invoice  payment record has been updated.</p>
-                        </td>
-                    </tr>
+    <div class="content">
+      <p><strong>Unit Address:</strong> {{ unit_address }}</p>
 
-                    <tr>
-                        <td style="padding: 10px 20px;">
-                            <p style="font-size:16px; color:#34495e;">
-                                <strong>Unit Address:</strong> {{ unit_address }}
-                            </p>
-                        </td>
-                    </tr>
-                    
-                    <tr>
-                        <td style="padding: 15px 20px;">
-                            <table width="100%" cellpadding="10" style="border-collapse: collapse;">
-                                <tr>
-                                    <td style="background:#ecf0f1; border-radius:6px; font-size:15px;">
-                                        <strong>Invoice  No: </strong>  {{ invoice_no }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="background:#d1f7d6; border-radius:6px; font-size:15px;">
-                                        <strong>Remittance  Amount:</strong> Rs {{ remittance_amount }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="background:#ffe6e6; border-radius:6px; font-size:15px;">
-                                        <strong>Site  Location:</strong>  {{ site_location }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="background:#f8f9d2; border-radius:6px; font-size:15px;">
-                                        <strong>Status:</strong> {{ status }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="background:#e8f4ff; border-radius:6px; font-size:15px;">
-                                        <strong>Closed ? :</strong> 
-                                         
-                                        ✅ Yes
-                                         
-                                             
-                                         
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    
-                     
-                    
-                    <tr>
-                        <td align="center" style="padding-top:20px; font-size:13px; color:#7f8c8d;">
-                            This is an automated notification. If you have questions, contact support.
-                        </td>
-                    </tr>
+      <div class="info">
+        <div class="info-row"><strong>Invoice No:</strong> {{ invoice_no }}</div>
+        <div class="info-row"><strong>Remittance Amount:</strong> Rs {{ remittance_amount }}</div>
+        <div class="info-row"><strong>Site Location:</strong> {{ site_location }}</div>
+        <div class="info-row">
+          <strong>Status:</strong> 
+          <span class="status {% if status == 'Fully Paid' %}success{% elif status == 'Unpaid' %}pending{% else %}failed{% endif %}">
+            {{ status }}
+          </span>
+        </div>
+        <div class="info-row">
+          <strong>Closed?</strong>
+           
+            ✅ Yes
+          
+        </div>
+      </div>
+    </div>
 
-                </table>
-            
-            </td>
-        </tr>
-    </table>
+    <div class="footer">
+      <p>This is an automated notification. If you have any questions, please contact through chat app.</p>
+      <p>© {{ current_year }} Crafted with ❤️ by 
+        <a href="https://obsidian.com.pk" target="_blank" rel="noopener noreferrer">Obsidian</a>
+      </p>
+    </div>
+  </div>
 
 </body>
 </html>

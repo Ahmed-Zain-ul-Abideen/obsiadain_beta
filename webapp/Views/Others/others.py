@@ -3,6 +3,8 @@ from django.contrib.auth.models import User, Group
 from django.contrib import messages
 from   webapp.Views.utils   import  send_html_email
 from  webapp.models   import   *
+from  django.utils   import  timezone
+
 
 def add_inspector(request):
     if  not    request.user.is_authenticated:
@@ -127,6 +129,8 @@ def add_inspection_report(request, mill_id, unit_id):
             messages.warning(request, msg)
             return redirect(request.META.get('HTTP_REFERER'))
         
+
+ 
         
 
         # Save inspection record
@@ -153,7 +157,9 @@ def add_inspection_report(request, mill_id, unit_id):
             #Installation  report  email
             try:
 
-                unit_address = unit.address  
+                unit_address = unit.address 
+
+                current_year  = str(timezone.now().year)
 
                 context = {
                     "num_camera_installed":   num_camera_installed,
@@ -167,6 +173,7 @@ def add_inspection_report(request, mill_id, unit_id):
                     "TnT_Software_Offline": tnt_software_offline,
                     "Remarks": remarks,
                     "unit_address":unit_address,
+                    "current_year": current_year
 
                 }
 

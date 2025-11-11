@@ -3,6 +3,8 @@ from django.contrib import messages
 from   webapp.Views.Invoices.forms   import   InvoiceForm, InvoiceItemFormSet , HardwareFormSet ,  SoftwareFormSet
 from  webapp.models   import   *
 import   random,  string
+from django.urls import reverse
+from  webapp.Views.Invoices.thr_xhtmpd    import   generate_bifurcate_invoice_pdf
 
 def   Invoices_records_list(request):
     if  not    request.user.is_authenticated:
@@ -129,7 +131,17 @@ def  create_invoice_bufricate(request,unit_id):
             invoice.save()
 
             messages.success(request, "Invoice created successfully!")
-            return redirect('generate_bifurcate_invoice_pdf', invoice_id=invoice.id)
+            return generate_bifurcate_invoice_pdf(request, invoice)
+
+
+            # pdf_url = reverse('generate_bifurcate_invoice_pdf', args=[invoice.id])
+
+            # Redirect back to the same page, passing PDF URL as a query param
+            # return redirect(f"{request.META.get('HTTP_REFERER')}?pdf={pdf_url}")
+            
+            
+             
+            # return redirect('generate_bifurcate_invoice_pdf', invoice_id=invoice.id)
         else:
             print("Both  form   is   invalid")
     else:
@@ -138,8 +150,8 @@ def  create_invoice_bufricate(request,unit_id):
         hardware_formset = HardwareFormSet()
 
     
-    print("software_formset.management_form  ",software_formset.management_form)
-    print("hardware_formset.management_form  ",hardware_formset.management_form)
+    # print("software_formset.management_form  ",software_formset.management_form)
+    # print("hardware_formset.management_form  ",hardware_formset.management_form)
 
     return render(request, 'Invoices/Bifurcate/create_invoice.html', {'form': form,"hardware_formset":hardware_formset, 'software_formset': software_formset,"unit":unit,"invoice_id":invoice_id})
 

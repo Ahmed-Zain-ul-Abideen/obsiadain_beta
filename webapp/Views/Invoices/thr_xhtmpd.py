@@ -8,6 +8,7 @@ from xhtml2pdf import pisa
 from io import BytesIO
 from  webapp.models import Invoice
 import  os
+from   django.utils   import   timezone
 from   django.conf   import   settings
 
 
@@ -147,7 +148,7 @@ def   test_generate_invoice_pdf(invoice_id):
 
 
 
-def  generate_bifurcate_invoice_pdf(request, invoice_id):
+def  generate_bifurcate_invoice_pdf(request, invoice):
 
     # Permission checks
     if not request.user.is_authenticated:
@@ -156,7 +157,7 @@ def  generate_bifurcate_invoice_pdf(request, invoice_id):
         return render(request, 'Denied/permission_denied.html')
 
     # Fetch invoice
-    invoice = get_object_or_404(Invoice, id=invoice_id)
+    # invoice = get_object_or_404(Invoice, id=invoice_id)
 
     # logo_path = os.path.join(settings.BASE_DIR, 'static', 'assets', 'images', 'obsidian_logo.png')
 
@@ -191,12 +192,15 @@ def  generate_bifurcate_invoice_pdf(request, invoice_id):
         email_to = invoice.mill_unit_invoices.mill.owner.email
         unit_address = invoice.mill_unit_invoices.address
 
+        current_year  = str(timezone.now().year)
+
         context = {
             "invoice_no": invoice.invoice_no,
             "remittance_amount": invoice.remittance_amount,
             "site_location": invoice.site_location,
             "status": "Generated Invoice",
             "unit_address": unit_address,
+            "current_year": current_year
         }
 
         # Render your email body HTML

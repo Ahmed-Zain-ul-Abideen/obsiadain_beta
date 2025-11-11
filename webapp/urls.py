@@ -75,7 +75,7 @@ urlpatterns = [
 
 
     #Emails
-    path("set-password/<int:uid>/<str:token>/", set_password_view, name="set_password"),
+    path("set-password/<str:uidb64>/<str:token>/", set_password_view, name="set_password"),
 
 
     # UsersLoginLogoutActivitiesLog

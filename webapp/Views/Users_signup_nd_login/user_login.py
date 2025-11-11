@@ -5,6 +5,9 @@ from django.urls import reverse
 from django.contrib.auth.tokens import default_token_generator
 from   django.conf    import  settings
 from   webapp.models   import  *
+from   django.utils   import   timezone 
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes   
 from  webapp.Views.Invoices.thr_xhtmpd   import   test_generate_invoice_pdf
 from django.http import JsonResponse
 from  webapp.Views.utils   import   verify_email_smtp,send_html_email
@@ -102,13 +105,16 @@ def forgot_password(request):
         try:
             # Generate password reset link
             token = default_token_generator.make_token(user)
-            uid = user.pk
+            uid =  urlsafe_base64_encode(force_bytes(user.pk))
 
             reset_link = f"{settings.DOMAIN}{reverse('set_password', args=[uid, token])}"
 
+            current_year  = str(timezone.now().year)
+
             context = {
                 "username": username,
-                "reset_link": reset_link
+                "reset_link": reset_link,
+                "current_year":current_year
             }
 
             # Send reset email

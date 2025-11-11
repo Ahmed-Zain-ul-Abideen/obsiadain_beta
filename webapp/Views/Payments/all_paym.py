@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, Group 
 from django.contrib import messages
 from  webapp.models   import   *
+from   django.utils   import   timezone
 from   webapp.Views.utils   import  send_html_email
 
 def   view_inspection_of_payment(request, payment_id=None): 
@@ -68,7 +69,9 @@ def  analyze_invoice_payment(request, invoice_id=None):
 
                 unit_address = payment.invoice.mill_unit_invoices.address
 
-                print("unit_address  ",unit_address)  
+                # print("unit_address  ",unit_address)  
+
+                current_year  = str(timezone.now().year)
 
                 context = {
                     "invoice_no":   payment.invoice.invoice_no,
@@ -76,6 +79,7 @@ def  analyze_invoice_payment(request, invoice_id=None):
                     "site_location": payment.invoice.site_location,
                     "status":status_title,
                     "unit_address":unit_address,
+                    "current_year": current_year
 
                 }
 

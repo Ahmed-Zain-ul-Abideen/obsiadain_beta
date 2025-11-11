@@ -4,6 +4,12 @@
 *.pyc
 *.pdf
 .pdf
+*.png
+.png
+*.jpg
+.jpg
+*.jpeg
+.jpeg
 __pycache__/
 local_settings.py
 db.sqlite3

@@ -2,16 +2,18 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
 from django.contrib import messages
 from  webapp.Views.utils   import  invalidate_user_tokens
+from django.utils.http import urlsafe_base64_encode , urlsafe_base64_decode
 from django.shortcuts import render, redirect
 
-def set_password_view(request, uid, token):
+def set_password_view(request, uidb64, token):
 
+    uid =  urlsafe_base64_decode(uidb64).decode()
     try:
         user = User.objects.get(pk=uid)
         print("user  exist")
     except User.DoesNotExist:
         print("user not  exist")
-        messages.error(request, "User   does  not  Exist")
+        messages.warning(request, "User   does  not  Exist")
         return redirect("/")
 
     if request.method == "POST":
