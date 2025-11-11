@@ -60,8 +60,8 @@ def login_view(request):
 
                 if user is not None:
                     login(request, user)
-                    if user.is_superuser:
-                        return redirect('view_fbr_oficials')
+                    if  user.is_superuser   or   user.groups.filter(name="FBR_officials").exists():
+                        return redirect('dashbaord')
                     else:
                         return redirect('view_mills')
                 else:
