@@ -66,6 +66,7 @@ class   Mills_Units(models.Model):
         blank=True,
         validators=[RegexValidator(r'^[A-Za-z0-9\-]+$', 'NTN must be alphanumeric (letters, numbers, or dashes).')]
     )
+    cameras_installation_completed  =  models.BooleanField(default=False)
 
 
 

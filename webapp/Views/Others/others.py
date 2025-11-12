@@ -157,7 +157,10 @@ def add_inspection_report(request, mill_id, unit_id):
             #Installation  report  email
             try:
 
-                unit_address = unit.address 
+                unit_address = unit.address
+
+                unit.cameras_installation_completed  =  True
+                unit.save() 
 
                 current_year  = str(timezone.now().year)
 
@@ -208,15 +211,22 @@ def add_inspection_report(request, mill_id, unit_id):
                 print("Failure  inspection   update  email  ",e)
 
         else:
+            unit.cameras_installation_completed  =  False
+            unit.save()
             print("all  cameras  not  online  , not  sending  email now")
 
         messages.success(request, "Inspection report submitted successfully!")
  
         return redirect("view_inspection_reports")  # Change this URL if needed
     
+    previous_report   =   False
+    if     Inspection_Reports.objects.filter(mill_unit_id=unit_id).exists():
+        previous_report =  Inspection_Reports.objects.filter(mill_unit_id=unit_id).last()
+
     context = { 
         "mill":mill,
-        "unit":unit
+        "unit":unit,
+        "previous_report":previous_report
     }
     return render(request, "Others/add_inspection_report.html", context )
 
