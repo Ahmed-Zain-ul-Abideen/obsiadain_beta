@@ -147,3 +147,129 @@ def send_html_email(subject, to_email, context,template_path):
     
     # Send the email
     email.send(fail_silently=True)
+
+
+
+ 
+from django.core.mail import get_connection
+
+def verify_sender_recipient_status(from_email, to_email_list):
+    """
+    Establishes an SMTP connection using Django settings, authenticates, 
+    and verifies sender/recipient addresses using MAIL FROM/RCPT TO commands 
+    without sending the actual email data.
+    """
+    connection = None
+    smtp_server = None
+    results = {}
+
+    try:
+        # 1. Get the Django connection object which manages settings abstraction
+        connection = get_connection(fail_silently=False)
+        
+        # 2. Open the connection and authenticate (Handshake & AUTH LOGIN)
+        # This populates connection.connection with the raw smtplib.SMTP object
+        connection.open()
+        
+        # Access the raw smtplib object to manually issue commands
+        smtp_server = connection.connection 
+
+        print(f"Connection successful. Authenticated as {settings.EMAIL_HOST_USER}")
+
+        # 3. Verify the Sender address (MAIL FROM)
+        # The smtplib send_message function internally uses the below commands. 
+        # We manually use mail() here to check status without DATA.
+        try:
+            # .mail() issues the 'MAIL FROM:<address>' command
+            code, resp = smtp_server.mail(from_email)
+            if code == 250:
+                results['sender_status'] = f"Sender {from_email} accepted (Code 250 OK)"
+            else:
+                results['sender_status'] = f"Sender {from_email} rejected (Code {code}: {resp.decode()})"
+        except smtplib.SMTPRecipientsRefused as e:
+            results['sender_status'] = f"Sender {from_email} globally refused. Error: {e.recipients}"
+            
+        # 4. Verify Recipients (RCPT TO)
+        results['recipients'] = {}
+        for recipient in to_email_list:
+            try:
+                # .rcpt() issues the 'RCPT TO:<address>' command
+                code, resp = smtp_server.rcpt(recipient)
+                if code == 250 or code == 251: # 251 means user not local, but will forward
+                    results['recipients'][recipient] = f"Accepted (Code {code})"
+                else:
+                    results['recipients'][recipient] = f"Rejected (Code {code}: {resp.decode()})"
+            except smtplib.SMTPRecipientsRefused as e:
+                # This exception is generally not raised by .rcpt(), manual code check works better
+                results['recipients'][recipient] = f"Globally refused (Error: {e.recipients})"
+
+        # CRITICAL: We stop here before calling the DATA command to send email content.
+
+    except smtplib.SMTPAuthenticationError:
+        results['error'] = "Authentication Error: Check credentials."
+
+    except Exception as e:
+        results['error'] = f"A connection error occurred: {e}"
+
+    finally:
+        # 5. Quit the connection gracefully
+        if smtp_server:
+            smtp_server.quit()
+            print("Connection closed.")
+
+    return results
+
+
+
+def verify_email_via_smtp(sender_email, recipient_email, smtp_server="smtp.gmail.com", smtp_port=587, username="ijazhooria321@gmail.com", password="wjiqugvkakcddzog"):
+    """
+    Verify if recipient email exists by performing SMTP handshake
+    without sending the actual message.
+
+    Args:
+        sender_email (str): The sender's email address.
+        recipient_email (str): The recipient's email address to verify.
+        smtp_server (str): SMTP server to connect to.
+        smtp_port (int): SMTP port (default 587 for STARTTLS).
+        username (str): Optional SMTP username (if authentication required).
+        password (str): Optional SMTP password.
+
+    Returns:
+        dict: {'success': bool, 'message': str}
+    """
+
+    try:
+        # Connect to the SMTP server
+        server = smtplib.SMTP(smtp_server, smtp_port, timeout=10)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+
+        # Authenticate if needed
+        if username and password:
+            server.login(username, password)
+
+        # Perform SMTP handshake steps manually
+        code, response = server.mail(sender_email)
+        if code != 250:
+            return {'success': False, 'message': f"MAIL FROM rejected: {response.decode()}"}
+
+        code, response = server.rcpt(recipient_email)
+        if code == 250:
+            result = {'success': True, 'message': f"{recipient_email} is valid and accepted by the server."}
+        elif code == 550:
+            result = {'success': False, 'message': f"{recipient_email} was rejected (does not exist or blocked)."}
+        else:
+            result = {'success': False, 'message': f"Unknown RCPT response {code}: {response.decode()}"}
+
+        # Close the connection before DATA command
+        server.quit()
+        return result
+
+    except smtplib.SMTPConnectError as e:
+        return {'success': False, 'message': f"Connection error: {e}"}
+    except smtplib.SMTPServerDisconnected:
+        return {'success': False, 'message': "Server unexpectedly disconnected."}
+    except Exception as e:
+        return {'success': False, 'message': f"Error: {str(e)}"}
+
