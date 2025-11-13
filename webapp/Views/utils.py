@@ -19,71 +19,6 @@ def invalidate_user_tokens(user):
     user.last_login = timezone.now()
     user.save(update_fields=['last_login'])
 
-def verify_email_smtp(email):
-    domain = email.split('@')[-1]
-    try:
-        # Get MX record
-        mx_record = str(dns.resolver.resolve(domain, 'MX')[0].exchange)
-        
-        # Connect to mail server
-        server = smtplib.SMTP(mx_record)
-        server.helo()
-        server.mail('check@example.com')
-        code, message = server.rcpt(email)
-        server.quit()
-
-        if code == 250:
-            return True  # Email exists
-        else:
-            return False
-    except Exception as e:
-        print("Verification error:", e)
-        return 4975
-
- 
-
-# def verify_email_smtp(email):
-#     try:
-#         domain = email.split('@')[1]
-#         print("domain  ",domain)
-
-#         # resolve MX
-#         mx_records = dns.resolver.resolve(domain, 'MX')
-#         mx_record = str(mx_records[0].exchange)
-
-#         # try secure ports
-#         stat = False
-#         for port in [25, 465, 587]:
-#             try:
-#                 if port == 465:
-#                     server = smtplib.SMTP_SSL(mx_record, port, timeout=8)
-#                 else:
-#                     server = smtplib.SMTP(mx_record, port, timeout=8)
-#                     server.starttls()
-                
-#                 server.helo()
-#                 server.mail("test@example.com")
-#                 code, _ = server.rcpt(email)
-#                 server.quit()
-
-#                 print("code ",code, "   port  ",port)
-
-#                 if  code == 250:
-#                     stat = True
-#             except  Exception   as   e:
-#                 print("stat ",stat)
-#                 if  stat:
-#                     pass
-#                 else:
-#                     stat  =  4975
-#                 print("port   wise  e ",port ,"  ",e)
-#                 continue
-
-#         return  stat
-
-#     except Exception as e:
-#         print(f"Error verifying email: {e}")
-#         return  4975
          
     
      
@@ -103,30 +38,6 @@ def truncate_float(value, decimal_places=2):
     # Convert the result back to a float
     return float(truncated_value_str)
 
-# def verify_email_smtp(email):
-#     domain = email.split('@')[-1]
-#     try:
-#         # Connect to the domain's mail server
-#         mx_records = dns.resolver.resolve(domain, 'MX')
-#         mx_record = str(mx_records[0].exchange)
-        
-#         server = smtplib.SMTP(mx_record)
-#         server.set_debuglevel(0)
-#         server.helo()
-#         server.mail(settings.EMAIL_HOST_USER)
-#         code, message = server.rcpt(email)
-#         server.quit()
-
-#         print("smtp code",code)
-        
-#         # 250 is the success response code
-#         if code == 250:
-#             return True
-#         else:
-#             return False
-#     except Exception as e:
-#         print(f"Error verifying email: {e}")
-#         return  4975
 
 
 def send_html_email(subject, to_email, context,template_path):
@@ -147,3 +58,44 @@ def send_html_email(subject, to_email, context,template_path):
     
     # Send the email
     email.send(fail_silently=True)
+
+
+
+def verify_email_smtp(email):
+    domain = email.split('@')[-1]
+    print("domain   ",domain)
+    try:
+        # Connect to the domain's mail server
+        mx_records = dns.resolver.resolve(domain, 'MX')
+        print("mx_records   ",mx_records)
+        mx_record = str(mx_records[0].exchange)
+        
+        print("mx_record   ",mx_record)
+        server = smtplib.SMTP(mx_record, 25)
+        print("server   ",server)
+        server.set_debuglevel(0)
+        print("server.set_debuglevel(0)")
+        server.helo()
+        print("server.helo()")
+        server.mail(settings.EMAIL_HOST_USER)
+        print("server.mail(settings.EMAIL_HOST_USER)")
+        code, message = server.rcpt(email) 
+
+        print("smtp code  ",code,"   message  ", message)
+        server.quit()
+        print("server.quit()")
+
+        
+        
+        # 250 is the success response code
+        if code == 250:
+            return True
+        else:
+            return False
+    except Exception as e:
+        print(f"Error verifying email: {e}")
+        return  4975
+
+
+
+

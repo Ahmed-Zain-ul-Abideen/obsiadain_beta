@@ -151,11 +151,15 @@ def index(request):
 
 def  extra(request):
     #test_generate_invoice_pdf(8)
-    User.objects.filter(pk=10).delete()
+    #User.objects.filter(pk=10).delete()
     # Invoice.objects.filter(pk=12).delete()
     #users =  User.objects.all()
     # for  user  in   users:
-    #     print("user  ",user.username)
+    #     print("user  ",user.username)  
+
+    verify_email_smtp("klrjbde587@gmail.com")
+ 
+
     settings = Master_Settings.objects.all().first()
     fbr_account = Paymentaccounts.objects.all().first()
     context ={'settings':settings,
